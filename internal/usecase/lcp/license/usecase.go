@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	userdomain "github.com/Mehrbod2002/lcp/internal/domain"
 	"github.com/Mehrbod2002/lcp/internal/domain/lcp"
 	lcplicense "github.com/Mehrbod2002/lcp/internal/lcp/license"
 	"github.com/Mehrbod2002/lcp/internal/pkg/id"
@@ -20,12 +21,13 @@ type LicenseUsecase interface {
 type licenseUsecase struct {
 	repo    lcp.LicenseRepository
 	pubs    lcp.PublicationRepository
+	users   userdomain.UserRepository
 	lcp     *lcplicense.Service
 	baseURL string
 }
 
-func NewLicenseUsecase(repo lcp.LicenseRepository, pubs lcp.PublicationRepository, lcp *lcplicense.Service, baseURL string) LicenseUsecase {
-	return &licenseUsecase{repo: repo, pubs: pubs, lcp: lcp, baseURL: baseURL}
+func NewLicenseUsecase(repo lcp.LicenseRepository, pubs lcp.PublicationRepository, users userdomain.UserRepository, lcp *lcplicense.Service, baseURL string) LicenseUsecase {
+	return &licenseUsecase{repo: repo, pubs: pubs, users: users, lcp: lcp, baseURL: baseURL}
 }
 
 func (u *licenseUsecase) Create(ctx context.Context, input *lcp.LicenseInput) (*lcp.License, error) {
@@ -43,6 +45,15 @@ func (u *licenseUsecase) Create(ctx context.Context, input *lcp.LicenseInput) (*
 			if input.RightCopy == nil {
 				input.RightCopy = pub.RightCopy
 			}
+		}
+	}
+	if u.users != nil {
+		if err := u.users.Ensure(ctx, &userdomain.User{
+			ID:    input.UserID,
+			Email: input.UserID + "@local",
+			Name:  input.UserID,
+		}); err != nil {
+			return nil, err
 		}
 	}
 

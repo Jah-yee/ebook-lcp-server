@@ -13,6 +13,7 @@ import (
 	"github.com/Mehrbod2002/lcp/internal/adapter/rest"
 	"github.com/Mehrbod2002/lcp/internal/auth"
 	"github.com/Mehrbod2002/lcp/internal/config"
+	userdomain "github.com/Mehrbod2002/lcp/internal/domain"
 	lcpencrypt "github.com/Mehrbod2002/lcp/internal/lcp/encrypt"
 	lcplicense "github.com/Mehrbod2002/lcp/internal/lcp/license"
 	"github.com/Mehrbod2002/lcp/internal/usecase/lcp/license"
@@ -63,7 +64,7 @@ func main() {
 	}
 	pubUsecase := publication.NewPublicationUsecase(pubRepo, lcpEnc)
 	publicBaseURL := buildBaseURL(cfg)
-	licUsecase := license.NewLicenseUsecase(licRepo, pubRepo, lcpSrv, publicBaseURL)
+	licUsecase := license.NewLicenseUsecase(licRepo, pubRepo, buildUserRepository(cfg, db), lcpSrv, publicBaseURL)
 	authn := auth.New(cfg.JWT.Secret, cfg.JWT.Admin2FACode)
 	restHandler := rest.NewHandler(pubRepo, pubUsecase)
 	authHandler := rest.NewAuthHandler(cfg.JWT.Secret, cfg.Admin.Username, cfg.Admin.Password, cfg.Publisher.Username, cfg.Publisher.Password, cfg.JWT.Admin2FACode)
@@ -135,6 +136,13 @@ func buildLicenseRepository(cfg *config.Config, db *sql.DB) (lcp.LicenseReposito
 		return lcp.NewLicenseRepository(), nil
 	}
 	return lcp.NewPersistentLicenseRepository(filepath.Join(cfg.DataDir, "licenses.json"))
+}
+
+func buildUserRepository(cfg *config.Config, db *sql.DB) userdomain.UserRepository {
+	if db != nil {
+		return lcp.NewPostgresUserRepository(db)
+	}
+	return nil
 }
 
 func buildBaseURL(cfg *config.Config) string {

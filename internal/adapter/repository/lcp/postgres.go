@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"time"
 
+	userdomain "github.com/Mehrbod2002/lcp/internal/domain"
 	domain "github.com/Mehrbod2002/lcp/internal/domain/lcp"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
@@ -15,6 +16,10 @@ type postgresPublicationRepository struct {
 }
 
 type postgresLicenseRepository struct {
+	db *sql.DB
+}
+
+type postgresUserRepository struct {
 	db *sql.DB
 }
 
@@ -114,6 +119,10 @@ func NewPostgresPublicationRepository(db *sql.DB) PublicationRepository {
 
 func NewPostgresLicenseRepository(db *sql.DB) LicenseRepository {
 	return &postgresLicenseRepository{db: db}
+}
+
+func NewPostgresUserRepository(db *sql.DB) userdomain.UserRepository {
+	return &postgresUserRepository{db: db}
 }
 
 func (r *postgresPublicationRepository) Save(ctx context.Context, pub *domain.Publication) error {
@@ -256,6 +265,27 @@ func (r *postgresLicenseRepository) FindByPublication(ctx context.Context, publi
 func (r *postgresLicenseRepository) Delete(ctx context.Context, id string) error {
 	_, err := r.db.ExecContext(ctx, "DELETE FROM licenses WHERE id = $1", id)
 	return err
+}
+
+func (r *postgresUserRepository) Ensure(ctx context.Context, user *userdomain.User) error {
+	if user == nil || user.ID == "" {
+		return nil
+	}
+	email := user.Email
+	if email == "" {
+		email = user.ID + "@local"
+	}
+	_, err := r.db.ExecContext(ctx, `
+		INSERT INTO users (id, email, password_hash, role, two_factor_enabled, created_at)
+		VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)
+		ON CONFLICT (id) DO UPDATE SET
+			email = EXCLUDED.email,
+			role = EXCLUDED.role
+	`, user.ID, email, "managed-by-lcp", "user", false)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 type rowScanner interface {
