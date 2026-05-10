@@ -61,13 +61,17 @@ func (u *publicationUsecase) UploadAndEncrypt(ctx context.Context, title string,
 	if err != nil {
 		return nil, err
 	}
+	sourcePath := filepath.Join(filepath.Dir(encryptedPath), pubID+tempExt)
+	if err := os.WriteFile(sourcePath, raw, 0o644); err != nil {
+		return nil, err
+	}
 
 	// Store publication metadata
 	pub := &lcp.Publication{
 		ID:            pubID,
 		Title:         title,
 		Status:        "active",
-		FilePath:      tempPath,
+		FilePath:      sourcePath,
 		EncryptedPath: encryptedPath,
 		EncryptedURI:  encryptedPath,
 		CreatedAt:     time.Now(),
