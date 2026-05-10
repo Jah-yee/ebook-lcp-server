@@ -1,0 +1,73 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: lcp
+      POSTGRES_USER: lcp
+      POSTGRES_PASSWORD: lcp
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lcp"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  lcp-server:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      DB_DSN: postgres://lcp:lcp@postgres:5432/lcp?sslmode=disable
+      JWT_SECRET: local-dev-secret
+      ADMIN_2FA_CODE: "123456"
+      SERVER_PORT: :8080
+      PUBLIC_BASE_URL: http://localhost:8080
+      DATA_DIR: /var/lib/lcp/data
+      LCP_STORAGE_FS_DIR: /var/lib/lcp/storage
+      LCP_PROFILE: development
+    ports:
+      - "8080:8080"
+    volumes:
+      - lcp-data:/var/lib/lcp/data
+      - lcp-storage:/var/lib/lcp/storage
+
+  admin-ui:
+    build: ./frontend
+    depends_on:
+      - lcp-server
+    ports:
+      - "5173:80"
+
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./deploy/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  postgres-data:
+  lcp-data:
+  lcp-storage:
+  grafana-data:

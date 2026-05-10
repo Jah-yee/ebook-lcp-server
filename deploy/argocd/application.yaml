@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: lcp-server-prod
+  namespace: argocd
+spec:
+  project: lcp
+  source:
+    repoURL: https://github.com/amirHdev/lcp.git
+    targetRevision: main
+    path: deploy/overlays/prod
+    kustomize: {}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: lcp-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

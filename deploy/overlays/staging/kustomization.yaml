@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: lcp-staging
+resources:
+  - ../../k8s
+images:
+  - name: registry.example.com/lcp/lcp-server
+    newName: registry.testmedical.ir:5000/lcp-server
+    newTag: staging
+  - name: registry.example.com/lcp/lcp-server-core
+    newName: registry.testmedical.ir:5000/lcp-server
+    newTag: staging
+  - name: registry.example.com/lcp/lcp-admin-ui
+    newName: registry.testmedical.ir:5000/lcp-admin-ui
+    newTag: staging
+labels:
+  - pairs:
+      environment: staging
+patches:
+  - path: patch-configmap.yaml
+  - path: patch-ingress.yaml
+  - path: patch-hpa.yaml

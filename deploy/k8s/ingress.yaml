@@ -1,0 +1,46 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lcp-server
+  labels:
+    app: lcp-server
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - testmedical.ir
+      secretName: lcp-server-tls
+  rules:
+    - host: testmedical.ir
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: lcp-server
+                port:
+                  number: 80
+          - path: /graphql
+            pathType: Prefix
+            backend:
+              service:
+                name: lcp-server
+                port:
+                  number: 80
+          - path: /publications
+            pathType: Prefix
+            backend:
+              service:
+                name: lcp-server
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: lcp-admin-ui
+                port:
+                  number: 80

@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lcp-server
+  labels:
+    app: lcp-server
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: lcp-server
+  template:
+    metadata:
+      labels:
+        app: lcp-server
+    spec:
+      containers:
+        - name: lcp-server
+          image: registry.example.com/lcp/lcp-server:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: lcp-config
+          env:
+            - name: DB_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: lcp-secrets
+                  key: db-dsn
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: lcp-secrets
+                  key: jwt-secret
+            - name: ADMIN_2FA_CODE
+              valueFrom:
+                secretKeyRef:
+                  name: lcp-secrets
+                  key: admin-2fa-code
+            - name: LCP_CORE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: readium-core-secret
+                  key: readium-core-user
+            - name: LCP_CORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: readium-core-secret
+                  key: readium-core-password
+          ports:
+            - name: http
+              containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          volumeMounts:
+            - name: storage
+              mountPath: /var/lib/lcp/storage
+            - name: data
+              mountPath: /var/lib/lcp/data
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: lcp-storage
+        - name: data
+          persistentVolumeClaim:
+            claimName: lcp-data

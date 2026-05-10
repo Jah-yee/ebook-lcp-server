@@ -1,0 +1,89 @@
+stages:
+  - lint
+  - test
+  - security
+  - build
+  - deploy
+
+variables:
+  GO_VERSION: "1.22"
+  REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/lcp-server"
+
+lint:
+  stage: lint
+  image: golang:${GO_VERSION}
+  script:
+    - gofmt -l . | tee /tmp/gofmt.out
+    - test ! -s /tmp/gofmt.out
+    - go vet ./...
+  cache:
+    paths:
+      - /go/pkg/mod
+
+test:
+  stage: test
+  image: golang:${GO_VERSION}
+  script:
+    - go test ./...
+  cache:
+    paths:
+      - /go/pkg/mod
+
+frontend-build:
+  stage: test
+  image: node:22-alpine
+  script:
+    - cd frontend
+    - npm ci
+    - npm run build
+  cache:
+    paths:
+      - frontend/.npm
+
+trivy-scan:
+  stage: security
+  image:
+    name: aquasec/trivy:0.53.0
+    entrypoint: [""]
+  script:
+    - trivy fs --severity CRITICAL --exit-code 1 --no-progress .
+
+build-image:
+  stage: build
+  image: docker:24
+  services:
+    - name: docker:24-dind
+      command: ["--mtu=1460"]
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - docker build -t "$REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" .
+    - docker build -t "$REGISTRY_IMAGE/admin-ui:$CI_COMMIT_SHORT_SHA" frontend
+    - |
+      if [ -n "$CI_REGISTRY_USER" ]; then
+        echo "$CI_REGISTRY_PASSWORD" |
+          docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+        docker push "$REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+        docker push "$REGISTRY_IMAGE/admin-ui:$CI_COMMIT_SHORT_SHA"
+      else
+        echo "CI registry credentials not provided; skipping push."
+      fi
+  needs:
+    - job: test
+      artifacts: false
+    - job: frontend-build
+      artifacts: false
+    - job: trivy-scan
+      artifacts: false
+
+kubectl-deploy:
+  stage: deploy
+  image: bitnami/kubectl:1.30
+  script:
+    - kubectl version --client
+    - kubectl apply -k deploy/k8s
+  environment:
+    name: production
+  only:
+    - main
+  dependencies: []

@@ -1,0 +1,94 @@
+openapi: 3.0.3
+info:
+  title: LCP Server Contract REST API
+  version: 1.0.0
+servers:
+  - url: https://testmedical.ir
+security:
+  - bearerAuth: []
+paths:
+  /api/v1/lcp/process:
+    post:
+      summary: Process LCP input data or an uploaded publication
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+              properties:
+                title:
+                  type: string
+                file:
+                  type: string
+                  description: Base64 encoded publication content
+                data:
+                  type: object
+      responses:
+        "200":
+          description: Processing completed
+        "400":
+          description: Invalid input
+        "401":
+          description: Missing or invalid JWT
+        "403":
+          description: Role is not allowed
+  /api/v1/lcp/status:
+    get:
+      summary: Get service or process status
+      parameters:
+        - name: id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Status payload
+        "404":
+          description: Process was not found
+  /api/v1/admin/metrics:
+    get:
+      summary: Get admin metrics
+      parameters:
+        - name: X-2FA-Code
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Metrics payload
+        "403":
+          description: Admin role or 2FA check failed
+  /healthz:
+    get:
+      summary: Liveness probe
+      security: []
+      responses:
+        "200":
+          description: Alive
+  /readyz:
+    get:
+      summary: Readiness probe
+      security: []
+      responses:
+        "200":
+          description: Ready
+  /metrics:
+    get:
+      summary: Prometheus metrics
+      security: []
+      responses:
+        "200":
+          description: Prometheus text exposition metrics
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

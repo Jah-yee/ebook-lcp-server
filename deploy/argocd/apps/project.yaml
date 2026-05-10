@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: lcp
+  namespace: argocd
+spec:
+  description: LCP server and admin UI environments
+  sourceRepos:
+    - https://github.com/amirHdev/lcp.git
+  destinations:
+    - namespace: argocd
+      server: https://kubernetes.default.svc
+    - namespace: lcp-dev
+      server: https://kubernetes.default.svc
+    - namespace: lcp-staging
+      server: https://kubernetes.default.svc
+    - namespace: lcp-prod
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"

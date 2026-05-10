@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lcp-admin-ui
+  labels:
+    app: lcp-admin-ui
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: lcp-admin-ui
+  template:
+    metadata:
+      labels:
+        app: lcp-admin-ui
+    spec:
+      containers:
+        - name: lcp-admin-ui
+          image: registry.example.com/lcp/lcp-admin-ui:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lcp-admin-ui
+  labels:
+    app: lcp-admin-ui
+spec:
+  selector:
+    app: lcp-admin-ui
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

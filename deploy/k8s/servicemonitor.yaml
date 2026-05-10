@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: lcp-server
+  labels:
+    app: lcp-server
+spec:
+  selector:
+    matchLabels:
+      app: lcp-server
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s

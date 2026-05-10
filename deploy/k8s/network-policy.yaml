@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: lcp-server
+  labels:
+    app: lcp-server
+spec:
+  podSelector:
+    matchLabels:
+      app: lcp-server
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 8080
+  egress:
+    - ports:
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53
+    - ports:
+        - protocol: TCP
+          port: 5432

@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: lcp-backup
+  labels:
+    app: lcp-server
+spec:
+  schedule: "0 2 * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: metadata-backup
+              image: alpine:3.20
+              command:
+                - /bin/sh
+                - -c
+                - >-
+                  tar -czf /backup/lcp-metadata-$(date +%Y%m%d%H%M%S).tgz
+                  /data /storage
+              volumeMounts:
+                - name: data
+                  mountPath: /data
+                  readOnly: true
+                - name: storage
+                  mountPath: /storage
+                  readOnly: true
+                - name: backup
+                  mountPath: /backup
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: lcp-data
+            - name: storage
+              persistentVolumeClaim:
+                claimName: lcp-storage
+            - name: backup
+              emptyDir: {}

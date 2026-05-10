@@ -1,0 +1,8 @@
+write-kubeconfig-mode: "0644"
+tls-san:
+  - registry.testmedical.ir
+  - argocd.testmedical.ir
+  - testmedical.ir
+  - status.testmedical.ir
+  - dev.testmedical.ir
+  - staging.testmedical.ir

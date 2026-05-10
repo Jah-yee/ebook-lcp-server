@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lcp-config
+  labels:
+    app: lcp-server
+data:
+  SERVER_PORT: ":8080"
+  DATA_DIR: "/var/lib/lcp/data"
+  LCP_STORAGE_MODE: "fs"
+  LCP_STORAGE_FS_DIR: "/var/lib/lcp/storage"
+  LCP_PROFILE: "production"
+  PUBLIC_BASE_URL: "https://testmedical.ir"
+  LCP_PROVIDER_URI: "https://testmedical.ir"
+  LCP_CORE_URL: "http://lcp-core:8989"
+  STATUS_BASE_URL: "https://status.testmedical.ir"

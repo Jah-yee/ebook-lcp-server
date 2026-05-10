@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lcp-postgres
+  labels:
+    app: lcp-postgres
+spec:
+  selector:
+    app: lcp-postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: lcp-postgres
+  labels:
+    app: lcp-postgres
+spec:
+  serviceName: lcp-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lcp-postgres
+  template:
+    metadata:
+      labels:
+        app: lcp-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - name: postgres
+              containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: lcp
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: lcp-secrets
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: lcp-secrets
+                  key: postgres-password
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "lcp"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi

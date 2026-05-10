@@ -1,0 +1,144 @@
+package license
+
+import (
+	"bytes"
+	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"strings"
+	"time"
+
+	"github.com/Mehrbod2002/lcp/internal/domain/lcp"
+)
+
+type Service struct {
+	coreURL     string
+	coreUser    string
+	corePass    string
+	statusURL   string
+	statusUser  string
+	statusPass  string
+	providerURI string
+	httpClient  *http.Client
+}
+
+func NewService(coreURL, coreUser, corePass, statusURL, statusUser, statusPass, providerURI string) *Service {
+	return &Service{
+		coreURL:     strings.TrimRight(strings.TrimSpace(coreURL), "/"),
+		coreUser:    coreUser,
+		corePass:    corePass,
+		statusURL:   strings.TrimRight(strings.TrimSpace(statusURL), "/"),
+		statusUser:  statusUser,
+		statusPass:  statusPass,
+		providerURI: strings.TrimSpace(providerURI),
+		httpClient:  &http.Client{Timeout: 20 * time.Second},
+	}
+}
+
+func (s *Service) GenerateLicense(ctx context.Context, license *lcp.License) error {
+	if license == nil || license.PublicationID == "" || license.UserID == "" {
+		return fmt.Errorf("missing publication or user identifiers")
+	}
+	if s.coreURL == "" {
+		return nil
+	}
+
+	partial := map[string]any{
+		"provider": s.providerURI,
+		"user": map[string]any{
+			"id":        license.UserID,
+			"encrypted": []string{"email", "name"},
+		},
+		"encryption": map[string]any{
+			"user_key": map[string]any{
+				"algorithm": "http://www.w3.org/2001/04/xmlenc#sha256",
+				"text_hint": license.Hint,
+				"hex_value": passphraseHash(license.Passphrase),
+			},
+		},
+		"rights": map[string]any{},
+	}
+	if license.RightPrint != nil {
+		partial["rights"].(map[string]any)["print"] = license.RightPrint
+	}
+	if license.RightCopy != nil {
+		partial["rights"].(map[string]any)["copy"] = license.RightCopy
+	}
+	if license.StartDate != nil {
+		partial["rights"].(map[string]any)["start"] = license.StartDate.UTC().Truncate(time.Second)
+	}
+	if license.EndDate != nil {
+		partial["rights"].(map[string]any)["end"] = license.EndDate.UTC().Truncate(time.Second)
+	}
+
+	body, err := json.Marshal(partial)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.coreURL+"/contents/"+license.PublicationID+"/license", bytes.NewReader(body))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/vnd.readium.lcp.license.v1.0+json")
+	if s.coreUser != "" {
+		req.SetBasicAuth(s.coreUser, s.corePass)
+	}
+
+	resp, err := s.httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("lcp core returned %s", resp.Status)
+	}
+
+	var generated struct {
+		ID string `json:"id"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&generated); err == nil && generated.ID != "" {
+		license.ID = generated.ID
+	}
+	return nil
+}
+
+func (s *Service) RevokeLicense(ctx context.Context, id string) error {
+	if id == "" {
+		return fmt.Errorf("missing license id")
+	}
+	if s.statusURL == "" {
+		return nil
+	}
+
+	payload := map[string]string{"status": "revoked"}
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodPatch, s.statusURL+"/licenses/"+id+"/status", bytes.NewReader(body))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/vnd.readium.lcp.license.v1.0+json")
+	if s.statusUser != "" {
+		req.SetBasicAuth(s.statusUser, s.statusPass)
+	}
+	resp, err := s.httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusPartialContent {
+		return fmt.Errorf("status server returned %s", resp.Status)
+	}
+	return nil
+}
+
+func passphraseHash(value string) string {
+	sum := sha256.Sum256([]byte(value))
+	return hex.EncodeToString(sum[:])
+}

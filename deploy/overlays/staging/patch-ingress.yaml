@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lcp-server
+spec:
+  tls:
+    - hosts:
+        - staging.testmedical.ir
+      secretName: lcp-staging-server-tls
+  rules:
+    - host: staging.testmedical.ir
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: lcp-server
+                port:
+                  number: 80
+          - path: /graphql
+            pathType: Prefix
+            backend:
+              service:
+                name: lcp-server
+                port:
+                  number: 80
+          - path: /publications
+            pathType: Prefix
+            backend:
+              service:
+                name: lcp-server
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: lcp-admin-ui
+                port:
+                  number: 80
