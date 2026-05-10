@@ -11,6 +11,8 @@ type Publication struct {
 	Subjects            []string  `db:"subjects" json:"subjects,omitempty"`
 	Tags                []string  `db:"tags" json:"tags,omitempty"`
 	Status              string    `db:"status" json:"status,omitempty"`
+	RightPrint          *int      `db:"right_print" json:"right_print,omitempty"`
+	RightCopy           *int      `db:"right_copy" json:"right_copy,omitempty"`
 	FilePath            string    `db:"file_path" json:"file_path,omitempty"`
 	EncryptedPath       string    `db:"encrypted_path" json:"encrypted_path,omitempty"`
 	EncryptedURI        string    `db:"encrypted_uri" json:"encrypted_uri,omitempty"`

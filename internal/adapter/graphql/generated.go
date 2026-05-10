@@ -177,6 +177,8 @@ func encodePublication(pub *lcp.Publication, baseURL string) map[string]interfac
 	return map[string]interface{}{
 		"id":            pub.ID,
 		"title":         pub.Title,
+		"rightPrint":    pub.RightPrint,
+		"rightCopy":     pub.RightCopy,
 		"filePath":      pub.FilePath,
 		"encryptedPath": pub.EncryptedPath,
 		"createdAt":     pub.CreatedAt.Format(time.RFC3339),

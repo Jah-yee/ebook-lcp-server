@@ -8,7 +8,7 @@ Body:
 
 ```json
 {
-  "username": "amiradmin",
+  "username": "toghyani",
   "password": "<admin password>",
   "twoFactor": "<2fa code>"
 }
@@ -20,7 +20,7 @@ Response:
 {
   "token": "<jwt>",
   "role": "admin",
-  "subject": "amiradmin",
+  "subject": "toghyani",
   "expiresAt": "2026-05-16T00:00:00Z"
 }
 ```
@@ -28,6 +28,13 @@ Response:
 The same endpoint also accepts the publisher account and returns `role: "publisher"`.
 
 Use the publisher account for catalog and ingestion workflows. Use the admin account for platform operations and metrics.
+
+The admin and publisher catalog forms both support sharing metadata on the publication record:
+
+- `right_print`
+- `right_copy`
+
+Use `0` to disable the right. Leave the field empty to inherit the default from the publication when generating a license.
 
 ## Publication Catalog
 
@@ -49,6 +56,8 @@ Creates a publication record. The body can include:
 - `checksum`
 - `license_duration_days`
 - `file` as base64 when uploading a new publication
+- `right_print`
+- `right_copy`
 
 `GET /api/v1/publications/{publicationId}`
 
@@ -101,6 +110,19 @@ Response:
 The dashboard now provides a file picker. It reads the selected publication file in the browser, base64-encodes it, and sends it to this endpoint.
 
 `/api/v1/lcp/process` does not require `X-2FA-Code`. Admin 2FA is reserved for `/api/v1/admin/*` endpoints such as metrics.
+
+## Android PDF Reader Test
+
+After publishing a PDF, test it in a reader that supports LCP-encrypted publications, not a plain Android PDF viewer.
+
+Recommended flow:
+
+1. Use the publication download URL from the API or UI.
+2. Open the license file or license URL in the LCP-compatible Android reader.
+3. Enter the passphrase or follow the hint shown by the license.
+4. Confirm that the reader opens the PDF and that copy/print behavior matches the configured rights.
+
+If the reader does not support LCP, it will not open the encrypted file at all.
 
 ## Check Status
 

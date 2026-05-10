@@ -54,6 +54,8 @@ func EnsurePostgresSchema(ctx context.Context, db *sql.DB) error {
 			subjects JSONB NOT NULL DEFAULT '[]'::jsonb,
 			tags JSONB NOT NULL DEFAULT '[]'::jsonb,
 			status TEXT NOT NULL DEFAULT 'active',
+			right_print INTEGER,
+			right_copy INTEGER,
 			file_path TEXT NOT NULL,
 			encrypted_path TEXT,
 			encrypted_uri TEXT NOT NULL DEFAULT '',
@@ -91,6 +93,8 @@ func EnsurePostgresSchema(ctx context.Context, db *sql.DB) error {
 		`ALTER TABLE publications ADD COLUMN IF NOT EXISTS subjects JSONB NOT NULL DEFAULT '[]'::jsonb`,
 		`ALTER TABLE publications ADD COLUMN IF NOT EXISTS tags JSONB NOT NULL DEFAULT '[]'::jsonb`,
 		`ALTER TABLE publications ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'active'`,
+		`ALTER TABLE publications ADD COLUMN IF NOT EXISTS right_print INTEGER`,
+		`ALTER TABLE publications ADD COLUMN IF NOT EXISTS right_copy INTEGER`,
 		`ALTER TABLE publications ADD COLUMN IF NOT EXISTS encrypted_uri TEXT NOT NULL DEFAULT ''`,
 		`ALTER TABLE publications ADD COLUMN IF NOT EXISTS checksum TEXT NOT NULL DEFAULT ''`,
 		`ALTER TABLE publications ADD COLUMN IF NOT EXISTS license_duration_days INTEGER NOT NULL DEFAULT 30`,
@@ -119,13 +123,13 @@ func (r *postgresPublicationRepository) Save(ctx context.Context, pub *domain.Pu
 	}
 	_, err := r.db.ExecContext(ctx, `
 		INSERT INTO publications (
-			id, title, authors, language, subjects, tags, status,
+			id, title, authors, language, subjects, tags, status, right_print, right_copy,
 			file_path, encrypted_path, encrypted_uri, checksum, license_duration_days,
 			created_at, updated_at
 		)
 		VALUES (
-			$1, $2, $3::jsonb, $4, $5::jsonb, $6::jsonb, $7,
-			$8, $9, $10, $11, $12, $13, $14
+			$1, $2, $3::jsonb, $4, $5::jsonb, $6::jsonb, $7, $8, $9,
+			$10, $11, $12, $13, $14, $15, $16
 		)
 		ON CONFLICT (id) DO UPDATE SET
 			title = EXCLUDED.title,
@@ -134,6 +138,8 @@ func (r *postgresPublicationRepository) Save(ctx context.Context, pub *domain.Pu
 			subjects = EXCLUDED.subjects,
 			tags = EXCLUDED.tags,
 			status = EXCLUDED.status,
+			right_print = EXCLUDED.right_print,
+			right_copy = EXCLUDED.right_copy,
 			file_path = EXCLUDED.file_path,
 			encrypted_path = EXCLUDED.encrypted_path
 			, encrypted_uri = EXCLUDED.encrypted_uri,
@@ -141,14 +147,14 @@ func (r *postgresPublicationRepository) Save(ctx context.Context, pub *domain.Pu
 			license_duration_days = EXCLUDED.license_duration_days,
 			updated_at = EXCLUDED.updated_at
 	`, pub.ID, pub.Title, mustJSON(pub.Authors), pub.Language, mustJSON(pub.Subjects), mustJSON(pub.Tags), pub.Status,
-		pub.FilePath, pub.EncryptedPath, pub.EncryptedURI, pub.Checksum, pub.LicenseDurationDays, pub.CreatedAt, pub.UpdatedAt)
+		pub.RightPrint, pub.RightCopy, pub.FilePath, pub.EncryptedPath, pub.EncryptedURI, pub.Checksum, pub.LicenseDurationDays, pub.CreatedAt, pub.UpdatedAt)
 	return err
 }
 
 func (r *postgresPublicationRepository) FindAll(ctx context.Context) ([]*domain.Publication, error) {
 	rows, err := r.db.QueryContext(ctx, `
 		SELECT id, title, authors, language, subjects, tags, status,
-			file_path, encrypted_path, encrypted_uri, checksum, license_duration_days, created_at, updated_at
+			right_print, right_copy, file_path, encrypted_path, encrypted_uri, checksum, license_duration_days, created_at, updated_at
 		FROM publications
 		ORDER BY created_at DESC
 	`)
@@ -171,7 +177,7 @@ func (r *postgresPublicationRepository) FindAll(ctx context.Context) ([]*domain.
 func (r *postgresPublicationRepository) FindByID(ctx context.Context, id string) (*domain.Publication, error) {
 	row := r.db.QueryRowContext(ctx, `
 		SELECT id, title, authors, language, subjects, tags, status,
-			file_path, encrypted_path, encrypted_uri, checksum, license_duration_days, created_at, updated_at
+			right_print, right_copy, file_path, encrypted_path, encrypted_uri, checksum, license_duration_days, created_at, updated_at
 		FROM publications
 		WHERE id = $1
 	`, id)
@@ -258,15 +264,20 @@ type rowScanner interface {
 
 func scanPublication(row rowScanner) (*domain.Publication, error) {
 	pub := &domain.Publication{}
-	var authors, subjects, tags []byte
+	var (
+		authors, subjects, tags []byte
+		rightPrint, rightCopy   sql.NullInt64
+	)
 	err := row.Scan(&pub.ID, &pub.Title, &authors, &pub.Language, &subjects, &tags, &pub.Status,
-		&pub.FilePath, &pub.EncryptedPath, &pub.EncryptedURI, &pub.Checksum, &pub.LicenseDurationDays, &pub.CreatedAt, &pub.UpdatedAt)
+		&rightPrint, &rightCopy, &pub.FilePath, &pub.EncryptedPath, &pub.EncryptedURI, &pub.Checksum, &pub.LicenseDurationDays, &pub.CreatedAt, &pub.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
 	_ = json.Unmarshal(authors, &pub.Authors)
 	_ = json.Unmarshal(subjects, &pub.Subjects)
 	_ = json.Unmarshal(tags, &pub.Tags)
+	pub.RightPrint = nullIntPtr(rightPrint)
+	pub.RightCopy = nullIntPtr(rightCopy)
 	if pub.EncryptedURI == "" {
 		pub.EncryptedURI = pub.EncryptedPath
 	}
@@ -283,8 +294,19 @@ func mustJSON(v interface{}) string {
 
 func scanLicense(row rowScanner) (*domain.License, error) {
 	license := &domain.License{}
+	var rightPrint, rightCopy sql.NullInt64
 	err := row.Scan(&license.ID, &license.PublicationID, &license.UserID, &license.Passphrase,
-		&license.Hint, &license.PublicationURL, &license.RightPrint, &license.RightCopy,
+		&license.Hint, &license.PublicationURL, &rightPrint, &rightCopy,
 		&license.StartDate, &license.EndDate, &license.CreatedAt)
+	license.RightPrint = nullIntPtr(rightPrint)
+	license.RightCopy = nullIntPtr(rightCopy)
 	return license, err
+}
+
+func nullIntPtr(v sql.NullInt64) *int {
+	if !v.Valid {
+		return nil
+	}
+	n := int(v.Int64)
+	return &n
 }

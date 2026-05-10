@@ -36,6 +36,8 @@ type Publication = {
   subjects?: string[];
   tags?: string[];
   status?: string;
+  right_print?: number | null;
+  right_copy?: number | null;
   file_path?: string;
   encrypted_path?: string;
   encrypted_uri?: string;
@@ -82,6 +84,8 @@ function App() {
   const [catalogSubjects, setCatalogSubjects] = useState("publishing,ebooks");
   const [catalogTags, setCatalogTags] = useState("sample");
   const [catalogStatus, setCatalogStatus] = useState("active");
+  const [catalogRightPrint, setCatalogRightPrint] = useState("0");
+  const [catalogRightCopy, setCatalogRightCopy] = useState("0");
   const [catalogEncryptedUri, setCatalogEncryptedUri] = useState("");
   const [catalogChecksum, setCatalogChecksum] = useState("");
   const [catalogLicenseDays, setCatalogLicenseDays] = useState("30");
@@ -228,6 +232,8 @@ function App() {
         subjects: splitCSV(catalogSubjects),
         tags: splitCSV(catalogTags),
         status: catalogStatus,
+        right_print: parseOptionalNumber(catalogRightPrint),
+        right_copy: parseOptionalNumber(catalogRightCopy),
         encrypted_uri: catalogEncryptedUri,
         checksum: catalogChecksum,
         license_duration_days: Number(catalogLicenseDays) || 30,
@@ -294,6 +300,15 @@ function App() {
       .split(",")
       .map((item) => item.trim())
       .filter(Boolean);
+  }
+
+  function parseOptionalNumber(value: string) {
+    const trimmed = value.trim();
+    if (trimmed === "") {
+      return null;
+    }
+    const parsed = Number(trimmed);
+    return Number.isFinite(parsed) ? parsed : null;
   }
 
   useEffect(() => {
@@ -416,6 +431,14 @@ function App() {
               <input value={catalogTags} onChange={(event) => setCatalogTags(event.target.value)} placeholder="Comma separated" />
             </label>
             <label>
+              Print Rights
+              <input value={catalogRightPrint} onChange={(event) => setCatalogRightPrint(event.target.value)} placeholder="0 disables" />
+            </label>
+            <label>
+              Copy Rights
+              <input value={catalogRightCopy} onChange={(event) => setCatalogRightCopy(event.target.value)} placeholder="0 disables" />
+            </label>
+            <label>
               Status
               <input value={catalogStatus} onChange={(event) => setCatalogStatus(event.target.value)} />
             </label>
@@ -454,6 +477,7 @@ function App() {
                 <span>ID</span>
                 <span>Title</span>
                 <span>Status</span>
+                <span>Rights</span>
                 <span>Actions</span>
               </div>
               {publications.length === 0 && <div className="file-meta">No publications loaded yet.</div>}
@@ -462,6 +486,7 @@ function App() {
                   <span>{pub.id}</span>
                   <span>{pub.title}</span>
                   <span>{pub.status || "active"}</span>
+                  <span>{`print: ${pub.right_print ?? 0} / copy: ${pub.right_copy ?? 0}`}</span>
                   <span className="row-actions">
                     <button onClick={() => run(() => setPublicationStatus(pub.id, pub.status === "inactive" ? "active" : "inactive"))}>
                       {pub.status === "inactive" ? "Activate" : "Deactivate"}

@@ -528,12 +528,12 @@ components:
     LoginRequest:
       type: object
       required:
-      - username
-      - password
+        - username
+        - password
       properties:
         username:
           type: string
-          example: amiradmin
+          example: toghyani
         password:
           type: string
           example: e40949a95921fb6e
@@ -550,7 +550,7 @@ components:
           example: admin
         subject:
           type: string
-          example: amiradmin
+          example: toghyani
         expiresAt:
           type: string
           format: date-time
@@ -575,6 +575,12 @@ components:
           type: array
           items:
             type: string
+        right_print:
+          type: integer
+          description: Allowed print count for the publication; 0 disables print rights.
+        right_copy:
+          type: integer
+          description: Allowed copy count for the publication; 0 disables copy rights.
         status:
           type: string
           example: active
@@ -622,6 +628,12 @@ components:
           type: array
           items:
             type: string
+        right_print:
+          type: integer
+          description: Allowed print count for the publication; 0 disables print rights.
+        right_copy:
+          type: integer
+          description: Allowed copy count for the publication; 0 disables copy rights.
         encrypted_uri:
           type: string
         checksum:

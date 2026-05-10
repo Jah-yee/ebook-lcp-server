@@ -19,12 +19,13 @@ type LicenseUsecase interface {
 
 type licenseUsecase struct {
 	repo    lcp.LicenseRepository
+	pubs    lcp.PublicationRepository
 	lcp     *lcplicense.Service
 	baseURL string
 }
 
-func NewLicenseUsecase(repo lcp.LicenseRepository, lcp *lcplicense.Service, baseURL string) LicenseUsecase {
-	return &licenseUsecase{repo: repo, lcp: lcp, baseURL: baseURL}
+func NewLicenseUsecase(repo lcp.LicenseRepository, pubs lcp.PublicationRepository, lcp *lcplicense.Service, baseURL string) LicenseUsecase {
+	return &licenseUsecase{repo: repo, pubs: pubs, lcp: lcp, baseURL: baseURL}
 }
 
 func (u *licenseUsecase) Create(ctx context.Context, input *lcp.LicenseInput) (*lcp.License, error) {
@@ -33,6 +34,16 @@ func (u *licenseUsecase) Create(ctx context.Context, input *lcp.LicenseInput) (*
 	}
 	if input.StartDate != nil && input.EndDate != nil && input.EndDate.Before(*input.StartDate) {
 		return nil, fmt.Errorf("endDate must be after startDate")
+	}
+	if u.pubs != nil {
+		if pub, err := u.pubs.FindByID(ctx, input.PublicationID); err == nil && pub != nil {
+			if input.RightPrint == nil {
+				input.RightPrint = pub.RightPrint
+			}
+			if input.RightCopy == nil {
+				input.RightCopy = pub.RightCopy
+			}
+		}
 	}
 
 	license := &lcp.License{

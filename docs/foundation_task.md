@@ -13,7 +13,7 @@ This document proposes the first incremental step toward the full digital bookst
 | `POST` | `/publications` | Ingest a new publication (metadata + encrypted file location). |
 | `GET` | `/publications/{id}` | Retrieve a single publication by ID. |
 | `GET` | `/publications` | List/search publications (filter by status, title, author, tags). |
-| `PATCH` | `/publications/{id}` | Update metadata fields (title, authors, subjects, tags). |
+| `PATCH` | `/publications/{id}` | Update metadata fields (title, authors, subjects, tags, rights). |
 | `POST` | `/publications/{id}/activate` | Mark a publication as available for sale/delivery. |
 | `POST` | `/publications/{id}/deactivate` | Mark a publication as unavailable. |
 
@@ -28,7 +28,9 @@ This document proposes the first incremental step toward the full digital bookst
   "encrypted_uri": "s3://bucket/path/book.lcp",
   "checksum": "<sha256>",
   "tags": ["bestseller"],
-  "license_duration_days": 30
+  "license_duration_days": 30,
+  "right_print": 10,
+  "right_copy": 2000
 }
 ```
 
@@ -44,6 +46,8 @@ This document proposes the first incremental step toward the full digital bookst
   "status": "active",
   "tags": ["bestseller"],
   "license_duration_days": 30,
+  "right_print": 10,
+  "right_copy": 2000,
   "created_at": "2024-01-01T12:00:00Z",
   "updated_at": "2024-01-02T12:00:00Z"
 }

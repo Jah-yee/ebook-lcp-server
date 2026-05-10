@@ -63,7 +63,7 @@ func main() {
 	}
 	pubUsecase := publication.NewPublicationUsecase(pubRepo, lcpEnc)
 	publicBaseURL := buildBaseURL(cfg)
-	licUsecase := license.NewLicenseUsecase(licRepo, lcpSrv, publicBaseURL)
+	licUsecase := license.NewLicenseUsecase(licRepo, pubRepo, lcpSrv, publicBaseURL)
 	authn := auth.New(cfg.JWT.Secret, cfg.JWT.Admin2FACode)
 	restHandler := rest.NewHandler(pubRepo, pubUsecase)
 	authHandler := rest.NewAuthHandler(cfg.JWT.Secret, cfg.Admin.Username, cfg.Admin.Password, cfg.Publisher.Username, cfg.Publisher.Password, cfg.JWT.Admin2FACode)

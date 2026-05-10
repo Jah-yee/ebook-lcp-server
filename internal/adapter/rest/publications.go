@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -25,6 +26,8 @@ type PublicationRequest struct {
 	Language            string   `json:"language"`
 	Subjects            []string `json:"subjects"`
 	Tags                []string `json:"tags"`
+	RightPrint          *int     `json:"right_print"`
+	RightCopy           *int     `json:"right_copy"`
 	EncryptedURI        string   `json:"encrypted_uri"`
 	Checksum            string   `json:"checksum"`
 	LicenseDurationDays int      `json:"license_duration_days"`
@@ -38,6 +41,8 @@ type PublicationPatchRequest struct {
 	Language            *string  `json:"language,omitempty"`
 	Subjects            []string `json:"subjects,omitempty"`
 	Tags                []string `json:"tags,omitempty"`
+	RightPrint          *int     `json:"right_print,omitempty"`
+	RightCopy           *int     `json:"right_copy,omitempty"`
 	EncryptedURI        *string  `json:"encrypted_uri,omitempty"`
 	Checksum            *string  `json:"checksum,omitempty"`
 	LicenseDurationDays *int     `json:"license_duration_days,omitempty"`
@@ -133,6 +138,10 @@ func (h *PublicationHandler) create(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "title is required"})
 		return
 	}
+	if err := validatePublicationRights(req.RightPrint, req.RightCopy); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+		return
+	}
 
 	pub := &lcp.Publication{
 		Title:               req.Title,
@@ -141,6 +150,8 @@ func (h *PublicationHandler) create(w http.ResponseWriter, r *http.Request) {
 		Subjects:            req.Subjects,
 		Tags:                req.Tags,
 		Status:              defaultPublicationStatus(req.Status),
+		RightPrint:          req.RightPrint,
+		RightCopy:           req.RightCopy,
 		EncryptedURI:        req.EncryptedURI,
 		Checksum:            req.Checksum,
 		LicenseDurationDays: req.LicenseDurationDays,
@@ -204,6 +215,10 @@ func (h *PublicationHandler) patch(w http.ResponseWriter, r *http.Request, id st
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid json body"})
 		return
 	}
+	if err := validatePublicationRights(req.RightPrint, req.RightCopy); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+		return
+	}
 	if req.Title != nil {
 		pub.Title = *req.Title
 	}
@@ -230,6 +245,12 @@ func (h *PublicationHandler) patch(w http.ResponseWriter, r *http.Request, id st
 	}
 	if req.Tags != nil {
 		pub.Tags = req.Tags
+	}
+	if req.RightPrint != nil {
+		pub.RightPrint = req.RightPrint
+	}
+	if req.RightCopy != nil {
+		pub.RightCopy = req.RightCopy
 	}
 
 	pub.UpdatedAt = time.Now()
@@ -264,6 +285,16 @@ func defaultPublicationStatus(status string) string {
 		return "active"
 	}
 	return strings.TrimSpace(strings.ToLower(status))
+}
+
+func validatePublicationRights(rightPrint, rightCopy *int) error {
+	if rightPrint != nil && *rightPrint < 0 {
+		return fmt.Errorf("right_print must be zero or positive")
+	}
+	if rightCopy != nil && *rightCopy < 0 {
+		return fmt.Errorf("right_copy must be zero or positive")
+	}
+	return nil
 }
 
 func claimsHasRole(claims *auth.Claims, role string) bool {
