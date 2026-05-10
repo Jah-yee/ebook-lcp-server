@@ -45,6 +45,17 @@ func (u *licenseUsecase) Create(ctx context.Context, input *lcp.LicenseInput) (*
 			if input.RightCopy == nil {
 				input.RightCopy = pub.RightCopy
 			}
+		} else {
+			if err := u.pubs.Save(ctx, &lcp.Publication{
+				ID:           input.PublicationID,
+				Title:        input.PublicationID,
+				Status:       "active",
+				EncryptedURI: u.baseURL + "/publications/" + input.PublicationID + "/content",
+				CreatedAt:    time.Now(),
+				UpdatedAt:    time.Now(),
+			}); err != nil {
+				return nil, err
+			}
 		}
 	}
 	if u.users != nil {
