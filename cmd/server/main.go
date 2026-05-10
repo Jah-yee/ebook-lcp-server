@@ -83,8 +83,8 @@ func main() {
 	mux.Handle("/api/v1/publications", authn.RequireRole("admin", "publisher", "user", "guest")(publicationHandler))
 	mux.Handle("/api/v1/publications/", authn.RequireRole("admin", "publisher", "user", "guest")(publicationHandler))
 
-	mux.Handle("/api/v1/lcp/process", authn.RequireRole("admin", "user")(http.HandlerFunc(restHandler.Process)))
-	mux.Handle("/api/v1/lcp/status", authn.RequireRole("admin", "user", "guest")(http.HandlerFunc(restHandler.Status)))
+	mux.Handle("/api/v1/lcp/process", authn.RequireRole("admin", "publisher", "user")(http.HandlerFunc(restHandler.Process)))
+	mux.Handle("/api/v1/lcp/status", authn.RequireRole("admin", "publisher", "user", "guest")(http.HandlerFunc(restHandler.Status)))
 	mux.Handle("/api/v1/admin/metrics", authn.RequireRole("admin")(http.HandlerFunc(restHandler.Metrics)))
 
 	gqlHandler := graphql.NewHandler(&graphql.Resolver{
@@ -92,8 +92,8 @@ func main() {
 		LicenseUsecase:     licUsecase,
 		PublicBaseURL:      publicBaseURL,
 	})
-	mux.Handle("/graphql", authn.RequireRole("admin", "user")(gqlHandler))
-	mux.Handle("/publications/", authn.RequireRole("admin", "user", "guest")(publicationDownloadHandler(pubUsecase)))
+	mux.Handle("/graphql", authn.RequireRole("admin", "publisher", "user")(gqlHandler))
+	mux.Handle("/publications/", authn.RequireRole("admin", "publisher", "user", "guest")(publicationDownloadHandler(pubUsecase)))
 
 	port := cfg.Server.Port
 	if port == "" {

@@ -25,7 +25,7 @@ Roles:
 - `user`: `/api/v1/lcp/process`, `/api/v1/lcp/status`, GraphQL operations, and publication downloads.
 - `guest`: `/api/v1/lcp/status` and publication downloads.
 
-Admin requests must also include `X-2FA-Code` matching `ADMIN_2FA_CODE` when that environment variable is configured.
+Requests to `/api/v1/admin/*` must also include `X-2FA-Code` matching `ADMIN_2FA_CODE` when that environment variable is configured.
 
 ## Public API docs
 

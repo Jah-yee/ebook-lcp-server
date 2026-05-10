@@ -27,6 +27,8 @@ Response:
 
 The same endpoint also accepts the publisher account and returns `role: "publisher"`.
 
+Use the publisher account for catalog and ingestion workflows. Use the admin account for platform operations and metrics.
+
 ## Publication Catalog
 
 `GET /api/v1/publications`
@@ -98,7 +100,7 @@ Response:
 
 The dashboard now provides a file picker. It reads the selected publication file in the browser, base64-encodes it, and sends it to this endpoint.
 
-If you sign in as `admin`, the dashboard sends `X-2FA-Code` automatically on process requests. If you sign in as `publisher`, no 2FA header is needed.
+`/api/v1/lcp/process` does not require `X-2FA-Code`. Admin 2FA is reserved for `/api/v1/admin/*` endpoints such as metrics.
 
 ## Check Status
 

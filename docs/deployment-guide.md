@@ -13,7 +13,7 @@ Use a separate Kubernetes namespace per environment on a self-hosted K3s cluster
 Set these values before exposing the service:
 
 - `JWT_SECRET`: HMAC secret used to validate Bearer JWTs.
-- `ADMIN_2FA_CODE`: second factor required for requests using the `admin` role.
+- `ADMIN_2FA_CODE`: second factor required for requests under `/api/v1/admin/*`.
 - `PUBLIC_BASE_URL`: public HTTPS origin used in generated publication URLs.
 - `LCP_PROVIDER_URI`: provider URI embedded in generated LCP licenses.
 - `LCP_CORE_URL`: internal base URL of the Readium LCP core service.

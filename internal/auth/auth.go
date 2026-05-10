@@ -65,7 +65,7 @@ func (m *Middleware) RequireRole(roles ...string) func(http.Handler) http.Handle
 				writeAuthError(w, http.StatusForbidden, ErrForbidden)
 				return
 			}
-			if hasRole(claims, "admin") && m.admin2FACode != "" && r.Header.Get("X-2FA-Code") != m.admin2FACode {
+			if hasRole(claims, "admin") && m.admin2FACode != "" && requiresTwoFactor(r) && r.Header.Get("X-2FA-Code") != m.admin2FACode {
 				writeAuthError(w, http.StatusForbidden, errors.New("invalid admin 2fa code"))
 				return
 			}
@@ -154,6 +154,10 @@ func roleAllowed(claims *Claims, allowed map[string]struct{}) bool {
 
 func hasRole(claims *Claims, role string) bool {
 	return roleAllowed(claims, map[string]struct{}{strings.ToLower(role): struct{}{}})
+}
+
+func requiresTwoFactor(r *http.Request) bool {
+	return strings.HasPrefix(r.URL.Path, "/api/v1/admin/")
 }
 
 func sign(input, secret string) string {

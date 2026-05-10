@@ -3,6 +3,8 @@ package auth
 import (
 	"encoding/base64"
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 )
@@ -32,6 +34,48 @@ func TestParseBearerTokenRejectsBadSignature(t *testing.T) {
 
 	if _, err := ParseBearerToken(token, "other-secret"); err == nil {
 		t.Fatal("expected invalid token error")
+	}
+}
+
+func TestRequireRoleAllowsAdminWithoutTwoFactorOnNonAdminEndpoint(t *testing.T) {
+	mw := New("secret", "123456")
+	token := buildTestToken(t, Claims{
+		Subject: "user-1",
+		Role:    "admin",
+		Exp:     time.Now().Add(time.Hour).Unix(),
+	}, "secret")
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/lcp/process", nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+	rec := httptest.NewRecorder()
+
+	handler := mw.RequireRole("admin")(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("unexpected status %d", rec.Code)
+	}
+}
+
+func TestRequireRoleRequiresTwoFactorOnAdminEndpoint(t *testing.T) {
+	mw := New("secret", "123456")
+	token := buildTestToken(t, Claims{
+		Subject: "user-1",
+		Role:    "admin",
+		Exp:     time.Now().Add(time.Hour).Unix(),
+	}, "secret")
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/admin/metrics", nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+	rec := httptest.NewRecorder()
+
+	handler := mw.RequireRole("admin")(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusForbidden {
+		t.Fatalf("expected forbidden, got %d", rec.Code)
 	}
 }
 

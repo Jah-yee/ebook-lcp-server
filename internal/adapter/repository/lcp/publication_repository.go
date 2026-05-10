@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
-	"time"
 	"sync"
+	"time"
 
 	"github.com/Mehrbod2002/lcp/internal/domain/lcp"
 )

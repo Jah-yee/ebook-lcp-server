@@ -28,6 +28,29 @@ type MetricsResponse = {
   };
 };
 
+type Publication = {
+  id: string;
+  title: string;
+  authors?: string[];
+  language?: string;
+  subjects?: string[];
+  tags?: string[];
+  status?: string;
+  file_path?: string;
+  encrypted_path?: string;
+  encrypted_uri?: string;
+  checksum?: string;
+  licenseDurationDays?: number;
+  created_at?: string;
+  updated_at?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+type PublicationListResponse = {
+  publications: Publication[];
+};
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
 function App() {
@@ -39,6 +62,18 @@ function App() {
   const [title, setTitle] = useState("Example Publication");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState("Choose a publication file to upload.");
+  const [catalogTitle, setCatalogTitle] = useState("Publisher Sample");
+  const [catalogAuthors, setCatalogAuthors] = useState("Amirhossein Akhlaghpour");
+  const [catalogLanguage, setCatalogLanguage] = useState("en");
+  const [catalogSubjects, setCatalogSubjects] = useState("publishing,ebooks");
+  const [catalogTags, setCatalogTags] = useState("sample");
+  const [catalogStatus, setCatalogStatus] = useState("active");
+  const [catalogEncryptedUri, setCatalogEncryptedUri] = useState("");
+  const [catalogChecksum, setCatalogChecksum] = useState("");
+  const [catalogLicenseDays, setCatalogLicenseDays] = useState("30");
+  const [catalogFile, setCatalogFile] = useState<File | null>(null);
+  const [catalogFilePreview, setCatalogFilePreview] = useState("Choose a publication file for the catalog.");
+  const [publications, setPublications] = useState<Publication[]>([]);
   const [status, setStatus] = useState<StatusResponse | null>(null);
   const [metrics, setMetrics] = useState<MetricsResponse | null>(null);
   const [message, setMessage] = useState("");
@@ -99,6 +134,14 @@ function App() {
     setMetrics(body);
   }
 
+  async function refreshPublications() {
+    const response = await fetch(`${API_BASE}/api/v1/publications`, { headers: authHeaders });
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || "publication list request failed");
+    const payload = body as PublicationListResponse;
+    setPublications(payload.publications || []);
+  }
+
   async function processContent() {
     if (!selectedFile) {
       throw new Error("choose a publication file first");
@@ -121,8 +164,7 @@ function App() {
     const response = await fetch(`${API_BASE}/api/v1/lcp/process`, {
       method: "POST",
       headers: {
-        ...authHeaders,
-        ...(role === "admin" && twoFactor ? { "X-2FA-Code": twoFactor } : {})
+        ...authHeaders
       },
       body: JSON.stringify({ title, file: fileBase64 })
     });
@@ -132,10 +174,71 @@ function App() {
     await refreshStatus();
   }
 
+  async function publishCatalogItem() {
+    if (!catalogFile) {
+      throw new Error("choose a publication file for the catalog first");
+    }
+
+    const fileBase64 = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result;
+        if (typeof result !== "string") {
+          reject(new Error("file read failed"));
+          return;
+        }
+        resolve(result.split(",").pop() || "");
+      };
+      reader.onerror = () => reject(new Error("file read failed"));
+      reader.readAsDataURL(catalogFile);
+    });
+
+    const response = await fetch(`${API_BASE}/api/v1/publications`, {
+      method: "POST",
+      headers: authHeaders,
+      body: JSON.stringify({
+        title: catalogTitle,
+        authors: splitCSV(catalogAuthors),
+        language: catalogLanguage,
+        subjects: splitCSV(catalogSubjects),
+        tags: splitCSV(catalogTags),
+        status: catalogStatus,
+        encrypted_uri: catalogEncryptedUri,
+        checksum: catalogChecksum,
+        license_duration_days: Number(catalogLicenseDays) || 30,
+        file: fileBase64
+      })
+    });
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || "catalog create request failed");
+    setMessage(`Publication ${body.id} created`);
+    await refreshPublications();
+  }
+
+  async function setPublicationStatus(publicationId: string, nextStatus: "active" | "inactive") {
+    const response = await fetch(
+      `${API_BASE}/api/v1/publications/${publicationId}/${nextStatus === "active" ? "activate" : "deactivate"}`,
+      {
+        method: "POST",
+        headers: authHeaders
+      }
+    );
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || "catalog status update failed");
+    setMessage(`Publication ${body.id} marked ${body.status}`);
+    await refreshPublications();
+  }
+
   function onFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] || null;
     setSelectedFile(file);
     setFilePreview(file ? `${file.name} · ${file.type || "unknown type"} · ${Math.ceil(file.size / 1024)} KiB` : "Choose a publication file to upload.");
+  }
+
+  function onCatalogFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0] || null;
+    setCatalogFile(file);
+    setCatalogFilePreview(file ? `${file.name} · ${file.type || "unknown type"} · ${Math.ceil(file.size / 1024)} KiB` : "Choose a publication file for the catalog.");
   }
 
   async function run(action: () => Promise<void>) {
@@ -146,6 +249,20 @@ function App() {
       setMessage(error instanceof Error ? error.message : "request failed");
     }
   }
+
+  function splitCSV(value: string) {
+    return value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  useEffect(() => {
+    if (token) {
+      void run(refreshStatus);
+      void run(refreshPublications);
+    }
+  }, [token]);
 
   return (
     <main className="shell">
@@ -211,10 +328,11 @@ function App() {
 
         <div className="panel">
           <h2><BarChart3 size={18} /> Metrics</h2>
-          <button onClick={() => run(refreshMetrics)}>
+          <button onClick={() => run(refreshMetrics)} disabled={role !== "admin"}>
             <KeyRound size={18} />
             Load Metrics
           </button>
+          {role !== "admin" && <div className="file-meta">Admin login only.</div>}
           <dl className="metrics">
             <dt>Uptime</dt>
             <dd>{metrics?.uptimeSec ?? 0}s</dd>
@@ -223,6 +341,94 @@ function App() {
             <dt>OK / Failed</dt>
             <dd>{metrics ? `${metrics.metrics.processesOk} / ${metrics.metrics.processesFail}` : "0 / 0"}</dd>
           </dl>
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="section-head">
+          <h2><Shield size={18} /> Publisher Workspace</h2>
+          <button onClick={() => run(refreshPublications)} disabled={!token}>
+            Refresh Catalog
+          </button>
+        </div>
+        <div className="publisher-grid">
+          <div className="publisher-form">
+            <label>
+              Publication Title
+              <input value={catalogTitle} onChange={(event) => setCatalogTitle(event.target.value)} />
+            </label>
+            <label>
+              Authors
+              <input value={catalogAuthors} onChange={(event) => setCatalogAuthors(event.target.value)} placeholder="Comma separated" />
+            </label>
+            <label>
+              Language
+              <input value={catalogLanguage} onChange={(event) => setCatalogLanguage(event.target.value)} />
+            </label>
+            <label>
+              Subjects
+              <input value={catalogSubjects} onChange={(event) => setCatalogSubjects(event.target.value)} placeholder="Comma separated" />
+            </label>
+            <label>
+              Tags
+              <input value={catalogTags} onChange={(event) => setCatalogTags(event.target.value)} placeholder="Comma separated" />
+            </label>
+            <label>
+              Status
+              <input value={catalogStatus} onChange={(event) => setCatalogStatus(event.target.value)} />
+            </label>
+            <label>
+              Encrypted URI
+              <input value={catalogEncryptedUri} onChange={(event) => setCatalogEncryptedUri(event.target.value)} placeholder="Optional if uploading a file" />
+            </label>
+            <label>
+              Checksum
+              <input value={catalogChecksum} onChange={(event) => setCatalogChecksum(event.target.value)} placeholder="Optional sha256" />
+            </label>
+            <label>
+              License Duration Days
+              <input value={catalogLicenseDays} onChange={(event) => setCatalogLicenseDays(event.target.value)} />
+            </label>
+            <label>
+              Publication File
+              <div className="file-picker">
+                <label className="file-button">
+                  <FileUp size={18} />
+                  <span>Select file</span>
+                  <input type="file" onChange={onCatalogFileChange} />
+                </label>
+                <div className="file-meta">{catalogFilePreview}</div>
+              </div>
+            </label>
+            <button onClick={() => run(publishCatalogItem)}>
+              <CheckCircle2 size={18} />
+              Publish Catalog Item
+            </button>
+          </div>
+
+          <div className="catalog-list">
+            <div className="table">
+              <div className="row header catalog-row">
+                <span>ID</span>
+                <span>Title</span>
+                <span>Status</span>
+                <span>Actions</span>
+              </div>
+              {publications.length === 0 && <div className="file-meta">No publications loaded yet.</div>}
+              {publications.map((pub) => (
+                <div className="row catalog-row" key={pub.id}>
+                  <span>{pub.id}</span>
+                  <span>{pub.title}</span>
+                  <span>{pub.status || "active"}</span>
+                  <span className="row-actions">
+                    <button onClick={() => run(() => setPublicationStatus(pub.id, pub.status === "inactive" ? "active" : "inactive"))}>
+                      {pub.status === "inactive" ? "Activate" : "Deactivate"}
+                    </button>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

@@ -52,6 +52,20 @@ p {
   margin-bottom: 16px;
 }
 
+.publisher-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.publisher-form {
+  display: grid;
+}
+
+.catalog-list {
+  min-width: 0;
+}
+
 .panel {
   background: #ffffff;
   border: 1px solid #d8e0e5;
@@ -197,6 +211,21 @@ button {
   font-weight: 700;
 }
 
+.catalog-row {
+  grid-template-columns: minmax(150px, 1fr) minmax(180px, 1.2fr) 110px 130px;
+  min-width: 600px;
+}
+
+.row-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.row-actions button {
+  min-height: 34px;
+}
+
 @media (max-width: 920px) {
   .shell {
     padding: 18px;
@@ -204,6 +233,10 @@ button {
 
   .topbar,
   .grid {
+    display: block;
+  }
+
+  .publisher-grid {
     display: block;
   }
 

@@ -5,7 +5,7 @@ Lightweight License Content Protection (LCP) server that exposes REST and GraphQ
 ## Features
 
 - Contract REST endpoints at `/api/v1/lcp/process`, `/api/v1/lcp/status`, and `/api/v1/admin/metrics`.
-- JWT authentication with RBAC roles (`admin`, `publisher`, `user`, `guest`) and optional admin 2FA via `X-2FA-Code`.
+- JWT authentication with RBAC roles (`admin`, `publisher`, `user`, `guest`) and optional admin 2FA via `X-2FA-Code` on `/api/v1/admin/*`.
 - GraphQL endpoint at `/graphql` for managing publications and licenses.
 - Pluggable encryption interface backed by the upstream Readium `lcpencrypt` tool for real LCP publication processing.
 - In-memory repositories by default and JSON-backed metadata persistence when `DATA_DIR` is configured.
@@ -47,7 +47,7 @@ The GraphQL playground will be available at `http://localhost:8080/graphql`.
 
 ### REST API
 
-All contract endpoints require a Bearer JWT signed with `JWT_SECRET`. Admin calls also require `X-2FA-Code` when `ADMIN_2FA_CODE` is set.
+All contract endpoints require a Bearer JWT signed with `JWT_SECRET`. Admin calls under `/api/v1/admin/*` also require `X-2FA-Code` when `ADMIN_2FA_CODE` is set.
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/lcp/process \
@@ -151,6 +151,7 @@ Set `CI_REGISTRY`, `CI_REGISTRY_USER`, `CI_REGISTRY_PASSWORD`, and `KUBECONFIG` 
 - `docs/deployment-guide.md`
 - `docs/security-policy.md`
 - `docs/user-manual.md`
+- `docs/contract-matrix.md`
 - `docs/architecture.md`
 - `docs/openapi-rest.yaml`
 - Swagger/OpenAPI is also exposed at runtime on `/swagger.yaml` and `/swagger.json`.
