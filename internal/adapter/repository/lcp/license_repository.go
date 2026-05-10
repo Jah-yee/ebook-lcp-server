@@ -38,7 +38,17 @@ func NewPersistentLicenseRepository(path string) (LicenseRepository, error) {
 func (r *licenseRepository) Save(ctx context.Context, license *lcp.License) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	r.licenses = append(r.licenses, license)
+	replaced := false
+	for i, existing := range r.licenses {
+		if existing.ID == license.ID {
+			r.licenses[i] = license
+			replaced = true
+			break
+		}
+	}
+	if !replaced {
+		r.licenses = append(r.licenses, license)
+	}
 	return r.persistLocked()
 }
 

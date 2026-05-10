@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -118,12 +119,20 @@ func (s *Service) GenerateLicense(ctx context.Context, license *lcp.License) err
 		return lastErr
 	}
 
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	license.LCPL = string(bodyBytes)
+
 	var generated struct {
 		ID string `json:"id"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&generated); err == nil && generated.ID != "" {
+	if err := json.Unmarshal(bodyBytes, &generated); err == nil && generated.ID != "" {
 		license.ID = generated.ID
 	}
+
 	return nil
 }
 
@@ -163,3 +172,51 @@ func passphraseHash(value string) string {
 	sum := sha256.Sum256([]byte(value))
 	return hex.EncodeToString(sum[:])
 }
+
+
+func (s *Service) GetLicense(ctx context.Context, id string) ([]byte, error) {
+	if id == "" {
+		return nil, fmt.Errorf("missing license id")
+	}
+	if s.coreURL == "" {
+		return nil, fmt.Errorf("missing LCP core url")
+	}
+
+	candidates := []string{
+		s.coreURL + "/licenses/" + id,
+		s.coreURL + "/licenses/" + id + ".lcpl",
+	}
+
+	var lastErr error
+	for _, url := range candidates {
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+		if err != nil {
+			return nil, err
+		}
+		if s.coreUser != "" {
+			req.SetBasicAuth(s.coreUser, s.corePass)
+		}
+
+		resp, err := s.httpClient.Do(req)
+		if err != nil {
+			lastErr = err
+			continue
+		}
+
+		body, readErr := io.ReadAll(resp.Body)
+		_ = resp.Body.Close()
+		if readErr != nil {
+			lastErr = readErr
+			continue
+		}
+
+		if resp.StatusCode == http.StatusOK {
+			return body, nil
+		}
+
+		lastErr = fmt.Errorf("lcp core returned %s from %s: %s", resp.Status, url, string(body))
+	}
+
+	return nil, lastErr
+}
+

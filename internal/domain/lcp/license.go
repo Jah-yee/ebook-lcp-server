@@ -15,6 +15,7 @@ type License struct {
 	StartDate      *time.Time `db:"start_date" json:"start_date"`
 	EndDate        *time.Time `db:"end_date" json:"end_date"`
 	CreatedAt      time.Time  `db:"created_at" json:"created_at"`
+	LCPL           string     `db:"lcpl" json:"-"`
 }
 
 // LicenseInput is the input contract for creating a license.

@@ -82,7 +82,19 @@ func main() {
 	mux.HandleFunc("/healthz", restHandler.Healthz)
 	mux.HandleFunc("/readyz", restHandler.Readyz)
 	mux.HandleFunc("/metrics", restHandler.PrometheusMetrics)
-	mux.HandleFunc("/api/v1/licenses/", rest.LicenseUserData(licUsecase))
+	licenseDownloadHandler := rest.NewLicenseDownloadHandler(licUsecase, lcpSrv)
+	mux.Handle("/licenses/", licenseDownloadHandler)
+	mux.HandleFunc("/api/v1/licenses/", func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasSuffix(r.URL.Path, "/user") {
+			rest.LicenseUserData(licUsecase)(w, r)
+			return
+		}
+		if strings.HasSuffix(r.URL.Path, "/lcpl") {
+			licenseDownloadHandler.ServeHTTP(w, r)
+			return
+		}
+		http.NotFound(w, r)
+	})
 	mux.Handle("/api/v1/publications", authn.RequireRole("admin", "publisher", "user", "guest")(publicationHandler))
 	mux.Handle("/api/v1/publications/", authn.RequireRole("admin", "publisher", "user", "guest")(publicationHandler))
 
@@ -181,12 +193,16 @@ func publicationDownloadHandler(pubUsecase publication.PublicationUsecase) http.
 		}
 
 		parts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
-		if len(parts) < 3 || parts[0] != "publications" || parts[2] != "content" {
+
+		pubID := ""
+		if len(parts) == 3 && parts[0] == "publications" && parts[2] == "content" {
+			pubID = parts[1]
+		} else if len(parts) == 2 && parts[0] == "publications" && strings.HasSuffix(parts[1], ".lcpdf") {
+			pubID = strings.TrimSuffix(parts[1], ".lcpdf")
+		} else {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-
-		pubID := parts[1]
 		pub, err := pubUsecase.GetByID(context.Background(), pubID)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

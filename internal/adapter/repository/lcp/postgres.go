@@ -49,7 +49,8 @@ func EnsurePostgresSchema(ctx context.Context, db *sql.DB) error {
 			password_hash TEXT NOT NULL,
 			role VARCHAR(32) NOT NULL DEFAULT 'user',
 			two_factor_enabled BOOLEAN NOT NULL DEFAULT FALSE,
-			created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+			created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			lcpl TEXT NOT NULL DEFAULT ''
 		)`,
 		`CREATE TABLE IF NOT EXISTS publications (
 			id VARCHAR(36) PRIMARY KEY,
@@ -80,7 +81,8 @@ func EnsurePostgresSchema(ctx context.Context, db *sql.DB) error {
 			right_copy INTEGER,
 			start_date TIMESTAMP,
 			end_date TIMESTAMP,
-			created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+			created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			lcpl TEXT NOT NULL DEFAULT ''
 		)`,
 		`CREATE TABLE IF NOT EXISTS lcp_processes (
 			id VARCHAR(36) PRIMARY KEY,
@@ -102,6 +104,7 @@ func EnsurePostgresSchema(ctx context.Context, db *sql.DB) error {
 		`ALTER TABLE publications ADD COLUMN IF NOT EXISTS checksum TEXT NOT NULL DEFAULT ''`,
 		`ALTER TABLE publications ADD COLUMN IF NOT EXISTS license_duration_days INTEGER NOT NULL DEFAULT 30`,
 		`ALTER TABLE publications ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP`,
+		`ALTER TABLE licenses ADD COLUMN IF NOT EXISTS lcpl TEXT NOT NULL DEFAULT ''`,
 		`ALTER TABLE licenses DROP CONSTRAINT IF EXISTS licenses_publication_id_fkey`,
 		`ALTER TABLE licenses DROP CONSTRAINT IF EXISTS licenses_user_id_fkey`,
 	}
@@ -201,9 +204,9 @@ func (r *postgresLicenseRepository) Save(ctx context.Context, license *domain.Li
 	_, err := r.db.ExecContext(ctx, `
 		INSERT INTO licenses (
 			id, publication_id, user_id, passphrase, hint, publication_url,
-			right_print, right_copy, start_date, end_date, created_at
+			right_print, right_copy, start_date, end_date, created_at, lcpl
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 		ON CONFLICT (id) DO UPDATE SET
 			passphrase = EXCLUDED.passphrase,
 			hint = EXCLUDED.hint,
@@ -211,17 +214,18 @@ func (r *postgresLicenseRepository) Save(ctx context.Context, license *domain.Li
 			right_print = EXCLUDED.right_print,
 			right_copy = EXCLUDED.right_copy,
 			start_date = EXCLUDED.start_date,
-			end_date = EXCLUDED.end_date
+			end_date = EXCLUDED.end_date,
+			lcpl = EXCLUDED.lcpl
 	`, license.ID, license.PublicationID, license.UserID, license.Passphrase, license.Hint,
 		license.PublicationURL, license.RightPrint, license.RightCopy, license.StartDate,
-		license.EndDate, license.CreatedAt)
+		license.EndDate, license.CreatedAt, license.LCPL)
 	return err
 }
 
 func (r *postgresLicenseRepository) FindByID(ctx context.Context, id string) (*domain.License, error) {
 	row := r.db.QueryRowContext(ctx, `
 		SELECT id, publication_id, user_id, passphrase, hint, publication_url,
-			right_print, right_copy, start_date, end_date, created_at
+			right_print, right_copy, start_date, end_date, created_at, lcpl
 		FROM licenses
 		WHERE id = $1
 	`, id)
@@ -235,7 +239,7 @@ func (r *postgresLicenseRepository) FindByID(ctx context.Context, id string) (*d
 func (r *postgresLicenseRepository) FindByPublication(ctx context.Context, publicationID *string) ([]*domain.License, error) {
 	query := `
 		SELECT id, publication_id, user_id, passphrase, hint, publication_url,
-			right_print, right_copy, start_date, end_date, created_at
+			right_print, right_copy, start_date, end_date, created_at, lcpl
 		FROM licenses
 	`
 	args := []interface{}{}
@@ -327,7 +331,7 @@ func scanLicense(row rowScanner) (*domain.License, error) {
 	var rightPrint, rightCopy sql.NullInt64
 	err := row.Scan(&license.ID, &license.PublicationID, &license.UserID, &license.Passphrase,
 		&license.Hint, &license.PublicationURL, &rightPrint, &rightCopy,
-		&license.StartDate, &license.EndDate, &license.CreatedAt)
+		&license.StartDate, &license.EndDate, &license.CreatedAt, &license.LCPL)
 	license.RightPrint = nullIntPtr(rightPrint)
 	license.RightCopy = nullIntPtr(rightCopy)
 	return license, err
