@@ -20,6 +20,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: lsd-core
+                name: lcp-server
                 port:
-                  number: 8990
+                  number: 80

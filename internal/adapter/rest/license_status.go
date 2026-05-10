@@ -1,0 +1,86 @@
+package rest
+
+import (
+	"net/http"
+	"strings"
+	"time"
+
+	usecaseLicense "github.com/Mehrbod2002/lcp/internal/usecase/lcp/license"
+)
+
+type LicenseStatusLink struct {
+	Rel  string `json:"rel"`
+	Href string `json:"href"`
+	Type string `json:"type,omitempty"`
+}
+
+type LicenseStatusDocumentResponse struct {
+	ID      string              `json:"id"`
+	Status  string              `json:"status"`
+	Message string              `json:"message,omitempty"`
+	Updated string              `json:"updated"`
+	Links   []LicenseStatusLink `json:"links"`
+}
+
+func LicenseStatusDocument(licenses usecaseLicense.LicenseUsecase) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+			return
+		}
+
+		licenseID := strings.TrimPrefix(r.URL.Path, "/licenses/")
+		licenseID = strings.TrimPrefix(licenseID, "api/v1/licenses/")
+		licenseID = strings.TrimSuffix(licenseID, "/status")
+		licenseID = strings.Trim(licenseID, "/")
+
+		if licenseID == "" {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "license id is required"})
+			return
+		}
+
+		lic, err := licenses.GetByID(r.Context(), licenseID)
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			return
+		}
+		if lic == nil {
+			writeJSON(w, http.StatusNotFound, map[string]string{"error": "license not found"})
+			return
+		}
+
+		scheme := "https"
+		if forwarded := r.Header.Get("X-Forwarded-Proto"); forwarded != "" {
+			scheme = forwarded
+		}
+
+		host := r.Host
+		self := scheme + "://" + host + "/licenses/" + lic.ID + "/status"
+		licenseLink := "https://testmedical.ir/licenses/" + lic.ID + ".lcpl"
+
+		updated := lic.CreatedAt
+		if updated.IsZero() {
+			updated = time.Now().UTC()
+		}
+
+		w.Header().Set("Content-Type", "application/vnd.readium.license.status.v1.0+json")
+		writeJSON(w, http.StatusOK, LicenseStatusDocumentResponse{
+			ID:      lic.ID,
+			Status:  "ready",
+			Message: "License is ready.",
+			Updated: updated.UTC().Format(time.RFC3339),
+			Links: []LicenseStatusLink{
+				{
+					Rel:  "self",
+					Href: self,
+					Type: "application/vnd.readium.license.status.v1.0+json",
+				},
+				{
+					Rel:  "license",
+					Href: licenseLink,
+					Type: "application/vnd.readium.lcp.license.v1.0+json",
+				},
+			},
+		})
+	}
+}

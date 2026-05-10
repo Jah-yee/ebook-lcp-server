@@ -83,7 +83,14 @@ func main() {
 	mux.HandleFunc("/readyz", restHandler.Readyz)
 	mux.HandleFunc("/metrics", restHandler.PrometheusMetrics)
 	licenseDownloadHandler := rest.NewLicenseDownloadHandler(licUsecase, lcpSrv)
-	mux.Handle("/licenses/", licenseDownloadHandler)
+	licenseStatusHandler := rest.LicenseStatusDocument(licUsecase)
+	mux.HandleFunc("/licenses/", func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasSuffix(r.URL.Path, "/status") {
+			licenseStatusHandler(w, r)
+			return
+		}
+		licenseDownloadHandler.ServeHTTP(w, r)
+	})
 	mux.HandleFunc("/api/v1/licenses/", func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasSuffix(r.URL.Path, "/user") {
 			rest.LicenseUserData(licUsecase)(w, r)
