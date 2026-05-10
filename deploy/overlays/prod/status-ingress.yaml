@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lsd-core
+  labels:
+    app: lsd-core
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - status.testmedical.ir
+      secretName: lsd-core-tls
+  rules:
+    - host: status.testmedical.ir
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: lcp-server
+                port:
+                  number: 80

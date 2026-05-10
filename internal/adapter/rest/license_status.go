@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"encoding/json"
 	"net/http"
 	"strings"
 	"time"
@@ -64,7 +65,8 @@ func LicenseStatusDocument(licenses usecaseLicense.LicenseUsecase) http.HandlerF
 		}
 
 		w.Header().Set("Content-Type", "application/vnd.readium.license.status.v1.0+json")
-		writeJSON(w, http.StatusOK, LicenseStatusDocumentResponse{
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(LicenseStatusDocumentResponse{
 			ID:      lic.ID,
 			Status:  "ready",
 			Message: "License is ready.",
