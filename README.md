@@ -1,4 +1,4 @@
-# LCP Server - EBook Manager v1
+# LCP Server - EBook Manager v2
 
 Lightweight License Content Protection (LCP) server that exposes REST and GraphQL APIs for processing encrypted publications and issuing licenses. The repository includes the DevOps assets needed to run the service on self-hosted K3s with Docker, Kubernetes, GitLab CI/CD, GitHub Actions, and ArgoCD.
 
