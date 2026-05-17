@@ -175,3 +175,15 @@ grep -rl "your-registry.example.com" .
 ```bash
 k6 run -e BASE_URL=http://localhost:8080 -e JWT="$JWT" tests/k6/lcp-status.js
 ```
+
+# Pride and Prejudice — Demo Book
+
+**Public domain** ebook from [Project Gutenberg](https://www.gutenberg.org/ebooks/1342).
+
+## Quick Demo
+
+```bash
+# From project root
+cd examples/pride-and-prejudice
+../../examples/scripts/demo-setup.sh
+```
