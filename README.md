@@ -1,6 +1,9 @@
-# LCP Server
+# Ebook LCP Server
 
-Self-hosted Readium LCP server written in Go for ebook publishers, libraries, and platforms that need license generation, encrypted publication handling, and license status tracking.
+![CI](https://github.com/amirHdev/ebook-lcp-server/actions/workflows/go.yml/badge.svg)
+![License](https://img.shields.io/github/license/amirHdev/ebook-lcp-server)
+
+Self-hosted Readium LCP server written in Go for ebook publishers, libraries and platforms that need license generation, encrypted publication handling and license status tracking.
 
 ## Why this project?
 
@@ -10,6 +13,15 @@ Lightweight License Content Protection (LCP) server that exposes REST and GraphQ
 ## Project Status
 
 This is a live MVP project. the core REST and GraphQL APIs are functional along with assets for Docker, frontend and self-deployment environments. some of the production deployment tools may need to be configured.
+
+## Quick start
+
+```bash
+git clone https://github.com/amirHdev/lcp.git
+cd lcp
+cp .env.example .env
+docker compose up --build
+```
 
 ## Features
 
