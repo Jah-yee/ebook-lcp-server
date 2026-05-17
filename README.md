@@ -153,9 +153,10 @@ Before deploying, you must replace the following placeholders:
 
 Quick search & replace:
 
-````bash
+```bash
 grep -rl "yourdomain.com" .
 grep -rl "your-registry.example.com" .
+```
 
 ## Documentation
 
@@ -173,4 +174,4 @@ grep -rl "your-registry.example.com" .
 
 ```bash
 k6 run -e BASE_URL=http://localhost:8080 -e JWT="$JWT" tests/k6/lcp-status.js
-````
+```
