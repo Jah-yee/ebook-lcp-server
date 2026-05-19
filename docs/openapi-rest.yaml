@@ -288,6 +288,63 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
+  /api/v1/admin/licenses:
+    get:
+      summary: List licenses for the admin dashboard
+      operationId: listAdminLicenses
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: License list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminLicensesResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /api/v1/admin/licenses/{licenseId}:
+    patch:
+      summary: Update a license loan expiry date
+      operationId: patchAdminLicense
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: licenseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLicensePatchRequest"
+      responses:
+        "200":
+          description: Updated license
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminLicense"
+  /api/v1/admin/licenses/{licenseId}/revoke:
+    post:
+      summary: Revoke a license
+      operationId: revokeAdminLicense
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: licenseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: License revoked
   /api/v1/admin/users/{userId}/verify:
     post:
       summary: Mark a user as verified
@@ -813,6 +870,49 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AdminUser"
+    AdminLicense:
+      type: object
+      properties:
+        id:
+          type: string
+        publicationID:
+          type: string
+        userID:
+          type: string
+        passphrase:
+          type: string
+        hint:
+          type: string
+        publicationURL:
+          type: string
+        rightPrint:
+          type: integer
+        rightCopy:
+          type: integer
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    AdminLicensesResponse:
+      type: object
+      properties:
+        licenses:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminLicense"
+    AdminLicensePatchRequest:
+      type: object
+      properties:
+        endDate:
+          type: string
+          format: date-time
     LicenseUserData:
       type: object
       properties:

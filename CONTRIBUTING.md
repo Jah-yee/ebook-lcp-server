@@ -14,3 +14,14 @@ You can contribute by:
 - Improving Docker/Kubernetes deployment
 - Improving the admin UI
 - Reviewing pull requests
+
+## Developer setup
+
+```bash
+docker compose up --build
+sh scripts/demo-local.sh
+go test ./...
+cd frontend && npm ci && npm run build
+```
+
+Before opening a pull request, include a short summary, verification notes, and docs updates when public APIs or deployment flows change.

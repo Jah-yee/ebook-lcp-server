@@ -4,6 +4,7 @@ package license
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/amirhdev/ebook-lcp-server/internal/auth"
 	userdomain "github.com/amirhdev/ebook-lcp-server/internal/domain"
@@ -212,12 +213,38 @@ func TestRevokeRevokesAndDeletesLicense(t *testing.T) {
 	if lcpSvc.revoked != "lic1" {
 		t.Fatalf("expected revoked lic1, got %s", lcpSvc.revoked)
 	}
-	if repo.saved != nil {
-		t.Fatal("expected license to be deleted")
+	if repo.saved == nil || repo.saved.Status != "revoked" {
+		t.Fatal("expected license to be retained as revoked")
 	}
 	if len(hooks.events) != 1 || hooks.events[0].Type != webhook.EventLicenseRevoked {
 		t.Fatal("expected license.revoked webhook")
 	}
+}
+
+func TestUpdateEndDatePersistsLoanExtension(t *testing.T) {
+	start := mustParseTime(t, "2026-05-01T00:00:00Z")
+	repo := &fakeLicenseRepo{
+		saved: &domain.License{ID: "lic1", StartDate: &start, Status: "ready"},
+	}
+	uc := &licenseUsecase{repo: repo}
+	end := mustParseTime(t, "2026-05-31T00:00:00Z")
+
+	lic, err := uc.UpdateEndDate(context.Background(), "lic1", &end)
+	if err != nil {
+		t.Fatalf("UpdateEndDate failed: %v", err)
+	}
+	if lic.EndDate == nil || !lic.EndDate.Equal(end) {
+		t.Fatal("expected updated end date")
+	}
+}
+
+func mustParseTime(t *testing.T, value string) time.Time {
+	t.Helper()
+	parsed, err := time.Parse(time.RFC3339, value)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return parsed
 }
 
 func TestGetByIDHidesOtherTenant(t *testing.T) {

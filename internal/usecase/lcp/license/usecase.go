@@ -20,6 +20,7 @@ type LicenseUsecase interface {
 	Create(ctx context.Context, input *lcp.LicenseInput) (*lcp.License, error)
 	GetByID(ctx context.Context, id string) (*lcp.License, error)
 	GetByPublication(ctx context.Context, publicationID *string) ([]*lcp.License, error)
+	UpdateEndDate(ctx context.Context, id string, endDate *time.Time) (*lcp.License, error)
 	Revoke(ctx context.Context, id string) error
 }
 
@@ -96,6 +97,7 @@ func (u *licenseUsecase) Create(ctx context.Context, input *lcp.LicenseInput) (*
 		RightCopy:      input.RightCopy,
 		StartDate:      input.StartDate,
 		EndDate:        input.EndDate,
+		Status:         "ready",
 		CreatedAt:      time.Now(),
 	}
 
@@ -167,10 +169,18 @@ func (u *licenseUsecase) GetByPublication(ctx context.Context, publicationID *st
 }
 
 func (u *licenseUsecase) Revoke(ctx context.Context, id string) error {
+	lic, err := u.GetByID(ctx, id)
+	if err != nil {
+		return err
+	}
+	if lic == nil {
+		return fmt.Errorf("license not found")
+	}
 	if err := u.lcp.RevokeLicense(ctx, id); err != nil {
 		return err
 	}
-	if err := u.repo.Delete(ctx, id); err != nil {
+	lic.Status = "revoked"
+	if err := u.repo.Save(ctx, lic); err != nil {
 		return err
 	}
 	_ = u.hooks.Publish(ctx, webhook.Event{
@@ -182,4 +192,25 @@ func (u *licenseUsecase) Revoke(ctx context.Context, id string) error {
 		_ = u.audit.Record(ctx, "license.revoked", "license", id)
 	}
 	return nil
+}
+
+func (u *licenseUsecase) UpdateEndDate(ctx context.Context, id string, endDate *time.Time) (*lcp.License, error) {
+	lic, err := u.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if lic == nil {
+		return nil, fmt.Errorf("license not found")
+	}
+	if lic.StartDate != nil && endDate != nil && endDate.Before(*lic.StartDate) {
+		return nil, fmt.Errorf("endDate must be after startDate")
+	}
+	lic.EndDate = endDate
+	if err := u.repo.Save(ctx, lic); err != nil {
+		return nil, err
+	}
+	if u.audit != nil {
+		_ = u.audit.Record(ctx, "license.extended", "license", lic.ID)
+	}
+	return lic, nil
 }

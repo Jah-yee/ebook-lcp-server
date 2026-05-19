@@ -17,6 +17,7 @@ body {
 
 button,
 input,
+select,
 textarea {
   font: inherit;
 }
@@ -97,6 +98,7 @@ label {
 }
 
 input,
+select,
 textarea {
   width: 100%;
   box-sizing: border-box;
@@ -227,6 +229,22 @@ button {
 .admin-row {
   grid-template-columns: minmax(150px, 1fr) minmax(220px, 1.2fr) 110px 120px 120px;
   min-width: 740px;
+}
+
+.admin-license-row {
+  grid-template-columns: minmax(180px, 1.2fr) 120px 140px 100px 180px;
+  min-width: 780px;
+}
+
+.inline-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.inline-controls select {
+  width: auto;
+  min-width: 120px;
 }
 
 .cell-clip {

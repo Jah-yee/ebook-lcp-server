@@ -102,6 +102,7 @@ func main() {
 	adminUsersHandler := rest.NewAdminUsersHandler(userStore)
 	adminTenantsHandler := rest.NewAdminTenantsHandler(tenantStore)
 	auditHandler := rest.NewAuditHandler(auditRepo)
+	adminLicensesHandler := rest.NewAdminLicensesHandler(licUsecase)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/v1/auth/login", authHandler.Login)
@@ -144,6 +145,8 @@ func main() {
 	mux.Handle("/api/v1/admin/tenants", authn.RequireRole("admin")(adminTenantsHandler))
 	mux.Handle("/api/v1/admin/tenants/", authn.RequireRole("admin")(adminTenantsHandler))
 	mux.Handle("/api/v1/admin/audit", authn.RequireRole("admin")(auditHandler))
+	mux.Handle("/api/v1/admin/licenses", authn.RequireRole("admin")(adminLicensesHandler))
+	mux.Handle("/api/v1/admin/licenses/", authn.RequireRole("admin")(adminLicensesHandler))
 
 	gqlHandler := graphql.NewHandler(&graphql.Resolver{
 		PublicationUsecase: pubUsecase,

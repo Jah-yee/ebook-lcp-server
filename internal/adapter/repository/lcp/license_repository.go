@@ -49,6 +49,9 @@ func (r *licenseRepository) Save(ctx context.Context, license *lcp.License) erro
 	if !replaced {
 		r.licenses = append(r.licenses, license)
 	}
+	if license.Status == "" {
+		license.Status = "ready"
+	}
 	return r.persistLocked()
 }
 
@@ -58,6 +61,9 @@ func (r *licenseRepository) FindByID(ctx context.Context, id string) (*lcp.Licen
 
 	for _, lic := range r.licenses {
 		if lic.ID == id {
+			if lic.Status == "" {
+				lic.Status = "ready"
+			}
 			return lic, nil
 		}
 	}
@@ -71,6 +77,9 @@ func (r *licenseRepository) FindByPublication(ctx context.Context, publicationID
 	var result []*lcp.License
 	for _, lic := range r.licenses {
 		if publicationID == nil || lic.PublicationID == *publicationID {
+			if lic.Status == "" {
+				lic.Status = "ready"
+			}
 			result = append(result, lic)
 		}
 	}

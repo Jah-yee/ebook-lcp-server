@@ -86,7 +86,12 @@ type License = {
   rightCopy?: number | null;
   startDate?: string | null;
   endDate?: string | null;
+  status?: string;
   createdAt?: string;
+};
+
+type AdminLicensesResponse = {
+  licenses: License[];
 };
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
@@ -130,6 +135,8 @@ function App() {
   const [publications, setPublications] = useState<Publication[]>([]);
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
   const [createdLicenses, setCreatedLicenses] = useState<License[]>([]);
+  const [adminLicenses, setAdminLicenses] = useState<License[]>([]);
+  const [licenseStatusFilter, setLicenseStatusFilter] = useState("all");
   const [status, setStatus] = useState<StatusResponse | null>(null);
   const [metrics, setMetrics] = useState<MetricsResponse | null>(null);
   const [message, setMessage] = useState("");
@@ -211,6 +218,16 @@ function App() {
     if (!response.ok) throw new Error(body.error || "users request failed");
     const payload = body as AdminUsersResponse;
     setAdminUsers(payload.users || []);
+  }
+
+  async function refreshAdminLicenses() {
+    const response = await fetch(`${API_BASE}/api/v1/admin/licenses`, {
+      headers: { ...authHeaders, "X-2FA-Code": twoFactor },
+    });
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || "licenses request failed");
+    const payload = body as AdminLicensesResponse;
+    setAdminLicenses(payload.licenses || []);
   }
 
   async function processContent() {
@@ -368,6 +385,37 @@ function App() {
     await refreshAdminUsers();
   }
 
+  async function extendLicense(license: License, days: number) {
+    const base = license.endDate ? new Date(license.endDate) : new Date();
+    base.setUTCDate(base.getUTCDate() + days);
+    const response = await fetch(
+      `${API_BASE}/api/v1/admin/licenses/${license.id}`,
+      {
+        method: "PATCH",
+        headers: { ...authHeaders, "X-2FA-Code": twoFactor },
+        body: JSON.stringify({ endDate: base.toISOString() }),
+      },
+    );
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || "license update failed");
+    setMessage(`Extended ${license.id} by ${days} days`);
+    await refreshAdminLicenses();
+  }
+
+  async function revokeLicense(licenseId: string) {
+    const response = await fetch(
+      `${API_BASE}/api/v1/admin/licenses/${licenseId}/revoke`,
+      {
+        method: "POST",
+        headers: { ...authHeaders, "X-2FA-Code": twoFactor },
+      },
+    );
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || "license revoke failed");
+    setMessage(`Revoked ${licenseId}`);
+    await refreshAdminLicenses();
+  }
+
   function onFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] || null;
     setSelectedFile(file);
@@ -453,9 +501,17 @@ function App() {
       void run(refreshPublications);
       if (role === "admin") {
         void run(refreshAdminUsers);
+        void run(refreshAdminLicenses);
       }
     }
   }, [token, role]);
+
+  const visibleAdminLicenses = adminLicenses.filter((license) => {
+    if (licenseStatusFilter === "all") {
+      return true;
+    }
+    return (license.status || "ready") === licenseStatusFilter;
+  });
 
   return (
     <main className="shell">
@@ -919,6 +975,68 @@ function App() {
             })}
           </div>
         )}
+      </section>
+
+      <section className="panel">
+        <div className="section-head">
+          <h2>
+            <KeyRound size={18} /> License Administration
+          </h2>
+          <div className="inline-controls">
+            <select
+              value={licenseStatusFilter}
+              onChange={(event) => setLicenseStatusFilter(event.target.value)}
+            >
+              <option value="all">All</option>
+              <option value="ready">Ready</option>
+              <option value="revoked">Revoked</option>
+            </select>
+            <button
+              onClick={() => run(refreshAdminLicenses)}
+              disabled={role !== "admin"}
+            >
+              Refresh Licenses
+            </button>
+          </div>
+        </div>
+        <div className="table">
+          <div className="row header admin-license-row">
+            <span>License</span>
+            <span>User</span>
+            <span>Loan</span>
+            <span>Status</span>
+            <span>Actions</span>
+          </div>
+          {visibleAdminLicenses.length === 0 && (
+            <div className="file-meta">No matching licenses.</div>
+          )}
+          {visibleAdminLicenses.map((license) => (
+            <div className="row admin-license-row" key={license.id}>
+              <span className="cell-clip">{license.id}</span>
+              <span>{license.userID}</span>
+              <span>
+                {license.endDate
+                  ? new Date(license.endDate).toLocaleDateString()
+                  : "open ended"}
+              </span>
+              <span>{license.status || "ready"}</span>
+              <span className="row-actions">
+                <button
+                  onClick={() => run(() => extendLicense(license, 7))}
+                  disabled={role !== "admin" || license.status === "revoked"}
+                >
+                  +7 days
+                </button>
+                <button
+                  onClick={() => run(() => revokeLicense(license.id))}
+                  disabled={role !== "admin" || license.status === "revoked"}
+                >
+                  Revoke
+                </button>
+              </span>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="panel">

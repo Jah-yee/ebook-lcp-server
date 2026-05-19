@@ -15,6 +15,7 @@ type License struct {
 	RightCopy      *int       `db:"right_copy" json:"right_copy"`
 	StartDate      *time.Time `db:"start_date" json:"start_date"`
 	EndDate        *time.Time `db:"end_date" json:"end_date"`
+	Status         string     `db:"status" json:"status"`
 	CreatedAt      time.Time  `db:"created_at" json:"created_at"`
 	LCPL           string     `db:"lcpl" json:"-"`
 }

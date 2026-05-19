@@ -61,17 +61,21 @@ func LicenseStatusDocument(licenses usecaseLicense.LicenseUsecase) http.HandlerF
 
 		host := r.Host
 		self := scheme + "://" + host + "/licenses/" + lic.ID + "/status"
-		licenseLink := "https://yourdomain.com/licenses/" + lic.ID + ".lcpl"
+		licenseLink := scheme + "://" + host + "/licenses/" + lic.ID + ".lcpl"
+		status := lic.Status
+		if status == "" {
+			status = "ready"
+		}
 
 		w.Header().Set("Content-Type", "application/vnd.readium.license.status.v1.0+json")
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(LicenseStatusDocumentResponse{
 			ID:      lic.ID,
-			Status:  "ready",
-			Message: "License is ready.",
+			Status:  status,
+			Message: "License is " + status + ".",
 			Updated: UpdatedField{
 				License: lic.ID,
-				Status:  "ready",
+				Status:  status,
 			},
 			Links: []LicenseStatusLink{
 				{
