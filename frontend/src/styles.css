@@ -60,6 +60,38 @@ p {
   margin-bottom: 16px;
 }
 
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.summary-card {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid #d8e0e5;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(23, 32, 38, 0.05);
+}
+
+.summary-card strong,
+.summary-card span {
+  display: block;
+}
+
+.summary-card strong {
+  font-size: 20px;
+}
+
+.summary-card span {
+  color: #5b6770;
+  font-size: 13px;
+}
+
 .publisher-grid {
   display: grid;
   grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
@@ -159,6 +191,11 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+
 .status-pill {
   gap: 8px;
   min-width: 130px;
@@ -236,8 +273,14 @@ button {
   min-width: 780px;
 }
 
+.audit-row {
+  grid-template-columns: 170px minmax(180px, 1fr) 120px minmax(220px, 1.2fr);
+  min-width: 820px;
+}
+
 .inline-controls {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: center;
 }
@@ -245,6 +288,27 @@ button {
 .inline-controls select {
   width: auto;
   min-width: 120px;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  border: 1px solid #c7d2d9;
+  border-radius: 6px;
+  padding: 0 10px;
+  background: #fbfcfd;
+}
+
+.filter-chip input {
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.filter-chip input:focus {
+  outline: none;
 }
 
 .cell-clip {
@@ -268,6 +332,7 @@ button {
     padding: 18px;
   }
 
+  .summary-grid,
   .topbar,
   .grid {
     display: block;

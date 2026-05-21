@@ -3,10 +3,14 @@ import {
   Activity,
   BarChart3,
   CheckCircle2,
+  Clock3,
   FileUp,
+  FileText,
   KeyRound,
   Play,
+  Search,
   Shield,
+  Users,
 } from "lucide-react";
 import { createRoot } from "react-dom/client";
 import "./styles.css";
@@ -94,6 +98,19 @@ type AdminLicensesResponse = {
   licenses: License[];
 };
 
+type AuditEntry = {
+  id: string;
+  action: string;
+  actor: string;
+  resource: string;
+  resourceId: string;
+  createdAt: string;
+};
+
+type AuditResponse = {
+  entries: AuditEntry[];
+};
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
 function App() {
@@ -136,9 +153,15 @@ function App() {
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
   const [createdLicenses, setCreatedLicenses] = useState<License[]>([]);
   const [adminLicenses, setAdminLicenses] = useState<License[]>([]);
+  const [auditEntries, setAuditEntries] = useState<AuditEntry[]>([]);
   const [licenseStatusFilter, setLicenseStatusFilter] = useState("all");
+  const [licenseSearch, setLicenseSearch] = useState("");
+  const [publicationSearch, setPublicationSearch] = useState("");
+  const [publicationStatusFilter, setPublicationStatusFilter] = useState("all");
+  const [userSearch, setUserSearch] = useState("");
   const [status, setStatus] = useState<StatusResponse | null>(null);
   const [metrics, setMetrics] = useState<MetricsResponse | null>(null);
+  const [loading, setLoading] = useState<Record<string, boolean>>({});
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -228,6 +251,16 @@ function App() {
     if (!response.ok) throw new Error(body.error || "licenses request failed");
     const payload = body as AdminLicensesResponse;
     setAdminLicenses(payload.licenses || []);
+  }
+
+  async function refreshAuditEntries() {
+    const response = await fetch(`${API_BASE}/api/v1/admin/audit?limit=20`, {
+      headers: { ...authHeaders, "X-2FA-Code": twoFactor },
+    });
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || "audit request failed");
+    const payload = body as AuditResponse;
+    setAuditEntries(payload.entries || []);
   }
 
   async function processContent() {
@@ -470,6 +503,15 @@ function App() {
     }
   }
 
+  async function runTask(key: string, action: () => Promise<void>) {
+    setLoading((current) => ({ ...current, [key]: true }));
+    try {
+      await run(action);
+    } finally {
+      setLoading((current) => ({ ...current, [key]: false }));
+    }
+  }
+
   function splitCSV(value: string) {
     return value
       .split(",")
@@ -497,21 +539,66 @@ function App() {
 
   useEffect(() => {
     if (token) {
-      void run(refreshStatus);
-      void run(refreshPublications);
+      void runTask("status", refreshStatus);
+      void runTask("publications", refreshPublications);
       if (role === "admin") {
-        void run(refreshAdminUsers);
-        void run(refreshAdminLicenses);
+        void runTask("adminUsers", refreshAdminUsers);
+        void runTask("adminLicenses", refreshAdminLicenses);
+        void runTask("audit", refreshAuditEntries);
       }
     }
   }, [token, role]);
 
-  const visibleAdminLicenses = adminLicenses.filter((license) => {
-    if (licenseStatusFilter === "all") {
-      return true;
-    }
-    return (license.status || "ready") === licenseStatusFilter;
+  const visiblePublications = publications.filter((publication) => {
+    const matchesSearch =
+      publicationSearch.trim() === "" ||
+      [publication.id, publication.title, ...(publication.authors || [])]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(publicationSearch.trim().toLowerCase());
+    const effectiveStatus = publication.status || "active";
+    const matchesStatus =
+      publicationStatusFilter === "all" ||
+      effectiveStatus === publicationStatusFilter;
+    return matchesSearch && matchesStatus;
   });
+
+  const visibleAdminLicenses = adminLicenses.filter((license) => {
+    const effectiveStatus = getLicenseDisplayStatus(license);
+    const matchesStatus =
+      licenseStatusFilter === "all" || effectiveStatus === licenseStatusFilter;
+    const matchesSearch =
+      licenseSearch.trim() === "" ||
+      [license.id, license.userID, license.publicationID, license.hint]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(licenseSearch.trim().toLowerCase());
+    return matchesStatus && matchesSearch;
+  });
+
+  const visibleAdminUsers = adminUsers.filter((user) =>
+    userSearch.trim() === ""
+      ? true
+      : [user.id, user.email, user.name, user.role]
+          .join(" ")
+          .toLowerCase()
+          .includes(userSearch.trim().toLowerCase()),
+  );
+
+  const readyLicenses = adminLicenses.filter(
+    (license) => getLicenseDisplayStatus(license) === "ready",
+  ).length;
+  const expiredLicenses = adminLicenses.filter(
+    (license) => getLicenseDisplayStatus(license) === "expired",
+  ).length;
+  const revokedLicenses = adminLicenses.filter(
+    (license) => getLicenseDisplayStatus(license) === "revoked",
+  ).length;
+  const pendingPublishers = adminUsers.filter(
+    (user) => user.role === "publisher" && !user.verified,
+  ).length;
 
   return (
     <main className="shell">
@@ -528,6 +615,44 @@ function App() {
           {status?.status || "not loaded"}
         </div>
       </header>
+
+      <section className="summary-grid">
+        <div className="summary-card">
+          <FileText size={18} />
+          <div>
+            <strong>{publications.length}</strong>
+            <span>Publications</span>
+          </div>
+        </div>
+        <div className="summary-card">
+          <KeyRound size={18} />
+          <div>
+            <strong>{readyLicenses}</strong>
+            <span>Active loans</span>
+          </div>
+        </div>
+        <div className="summary-card">
+          <Clock3 size={18} />
+          <div>
+            <strong>{expiredLicenses}</strong>
+            <span>Expired loans</span>
+          </div>
+        </div>
+        <div className="summary-card">
+          <Shield size={18} />
+          <div>
+            <strong>{revokedLicenses}</strong>
+            <span>Revoked licenses</span>
+          </div>
+        </div>
+        <div className="summary-card">
+          <Users size={18} />
+          <div>
+            <strong>{pendingPublishers}</strong>
+            <span>Pending publishers</span>
+          </div>
+        </div>
+      </section>
 
       <section className="grid">
         <div className="panel auth-panel">
@@ -604,11 +729,11 @@ function App() {
             <BarChart3 size={18} /> Metrics
           </h2>
           <button
-            onClick={() => run(refreshMetrics)}
-            disabled={role !== "admin"}
+            onClick={() => runTask("metrics", refreshMetrics)}
+            disabled={role !== "admin" || loading.metrics}
           >
             <KeyRound size={18} />
-            Load Metrics
+            {loading.metrics ? "Loading..." : "Load Metrics"}
           </button>
           {role !== "admin" && (
             <div className="file-meta">Admin login only.</div>
@@ -633,9 +758,30 @@ function App() {
           <h2>
             <Shield size={18} /> Publisher Workspace
           </h2>
-          <button onClick={() => run(refreshPublications)} disabled={!token}>
-            Refresh Catalog
-          </button>
+          <div className="inline-controls">
+            <div className="filter-chip">
+              <Search size={16} />
+              <input
+                value={publicationSearch}
+                onChange={(event) => setPublicationSearch(event.target.value)}
+                placeholder="Search catalog"
+              />
+            </div>
+            <select
+              value={publicationStatusFilter}
+              onChange={(event) => setPublicationStatusFilter(event.target.value)}
+            >
+              <option value="all">All statuses</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+            <button
+              onClick={() => runTask("publications", refreshPublications)}
+              disabled={!token || loading.publications}
+            >
+              {loading.publications ? "Refreshing..." : "Refresh Catalog"}
+            </button>
+          </div>
         </div>
         <div className="publisher-grid">
           <div className="publisher-form">
@@ -749,10 +895,15 @@ function App() {
                 <span>Rights</span>
                 <span>Actions</span>
               </div>
-              {publications.length === 0 && (
-                <div className="file-meta">No publications loaded yet.</div>
+              {loading.publications && (
+                <div className="file-meta">Loading catalog...</div>
               )}
-              {publications.map((pub) => (
+              {!loading.publications && visiblePublications.length === 0 && (
+                <div className="file-meta">
+                  No publications match the current search or filter.
+                </div>
+              )}
+              {visiblePublications.map((pub) => (
                 <div className="row catalog-row" key={pub.id}>
                   <span className="cell-clip">{pub.id}</span>
                   <span className="cell-clip">{pub.title}</span>
@@ -983,19 +1134,29 @@ function App() {
             <KeyRound size={18} /> License Administration
           </h2>
           <div className="inline-controls">
+            <div className="filter-chip">
+              <Search size={16} />
+              <input
+                value={licenseSearch}
+                onChange={(event) => setLicenseSearch(event.target.value)}
+                placeholder="Search licenses"
+              />
+            </div>
             <select
               value={licenseStatusFilter}
               onChange={(event) => setLicenseStatusFilter(event.target.value)}
             >
               <option value="all">All</option>
               <option value="ready">Ready</option>
+              <option value="expired">Expired</option>
+              <option value="open-ended">Open ended</option>
               <option value="revoked">Revoked</option>
             </select>
             <button
-              onClick={() => run(refreshAdminLicenses)}
-              disabled={role !== "admin"}
+              onClick={() => runTask("adminLicenses", refreshAdminLicenses)}
+              disabled={role !== "admin" || loading.adminLicenses}
             >
-              Refresh Licenses
+              {loading.adminLicenses ? "Refreshing..." : "Refresh Licenses"}
             </button>
           </div>
         </div>
@@ -1007,7 +1168,10 @@ function App() {
             <span>Status</span>
             <span>Actions</span>
           </div>
-          {visibleAdminLicenses.length === 0 && (
+          {loading.adminLicenses && (
+            <div className="file-meta">Loading licenses...</div>
+          )}
+          {!loading.adminLicenses && visibleAdminLicenses.length === 0 && (
             <div className="file-meta">No matching licenses.</div>
           )}
           {visibleAdminLicenses.map((license) => (
@@ -1019,17 +1183,29 @@ function App() {
                   ? new Date(license.endDate).toLocaleDateString()
                   : "open ended"}
               </span>
-              <span>{license.status || "ready"}</span>
+              <span>{getLicenseDisplayStatus(license)}</span>
               <span className="row-actions">
                 <button
-                  onClick={() => run(() => extendLicense(license, 7))}
-                  disabled={role !== "admin" || license.status === "revoked"}
+                  onClick={() =>
+                    runTask("extendLicense", () => extendLicense(license, 7))
+                  }
+                  disabled={
+                    role !== "admin" ||
+                    getLicenseDisplayStatus(license) === "revoked" ||
+                    loading.extendLicense
+                  }
                 >
                   +7 days
                 </button>
                 <button
-                  onClick={() => run(() => revokeLicense(license.id))}
-                  disabled={role !== "admin" || license.status === "revoked"}
+                  onClick={() =>
+                    runTask("revokeLicense", () => revokeLicense(license.id))
+                  }
+                  disabled={
+                    role !== "admin" ||
+                    getLicenseDisplayStatus(license) === "revoked" ||
+                    loading.revokeLicense
+                  }
                 >
                   Revoke
                 </button>
@@ -1044,12 +1220,22 @@ function App() {
           <h2>
             <Shield size={18} /> Publisher Approval and Users
           </h2>
-          <button
-            onClick={() => run(refreshAdminUsers)}
-            disabled={role !== "admin"}
-          >
-            Refresh Users
-          </button>
+          <div className="inline-controls">
+            <div className="filter-chip">
+              <Search size={16} />
+              <input
+                value={userSearch}
+                onChange={(event) => setUserSearch(event.target.value)}
+                placeholder="Search users"
+              />
+            </div>
+            <button
+              onClick={() => runTask("adminUsers", refreshAdminUsers)}
+              disabled={role !== "admin" || loading.adminUsers}
+            >
+              {loading.adminUsers ? "Refreshing..." : "Refresh Users"}
+            </button>
+          </div>
         </div>
         <div className="table">
           <div className="row header admin-row">
@@ -1059,10 +1245,13 @@ function App() {
             <span>Status</span>
             <span>Action</span>
           </div>
-          {adminUsers.length === 0 && (
-            <div className="file-meta">No users loaded yet.</div>
+          {loading.adminUsers && (
+            <div className="file-meta">Loading users...</div>
           )}
-          {adminUsers.map((user) => (
+          {!loading.adminUsers && visibleAdminUsers.length === 0 && (
+            <div className="file-meta">No users match the current search.</div>
+          )}
+          {visibleAdminUsers.map((user) => (
             <div className="row admin-row" key={user.id}>
               <span>{user.id}</span>
               <span>{user.email}</span>
@@ -1092,9 +1281,50 @@ function App() {
       <section className="panel">
         <div className="section-head">
           <h2>
+            <Activity size={18} /> Audit Activity
+          </h2>
+          <button
+            onClick={() => runTask("audit", refreshAuditEntries)}
+            disabled={role !== "admin" || loading.audit}
+          >
+            {loading.audit ? "Refreshing..." : "Refresh Audit"}
+          </button>
+        </div>
+        <div className="table">
+          <div className="row header audit-row">
+            <span>When</span>
+            <span>Action</span>
+            <span>Actor</span>
+            <span>Resource</span>
+          </div>
+          {loading.audit && (
+            <div className="file-meta">Loading audit activity...</div>
+          )}
+          {!loading.audit && auditEntries.length === 0 && (
+            <div className="file-meta">No audit activity available yet.</div>
+          )}
+          {auditEntries.map((entry) => (
+            <div className="row audit-row" key={entry.id}>
+              <span>{new Date(entry.createdAt).toLocaleString()}</span>
+              <span>{entry.action}</span>
+              <span>{entry.actor}</span>
+              <span className="cell-clip">{`${entry.resource}:${entry.resourceId}`}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="section-head">
+          <h2>
             <Activity size={18} /> Process Status
           </h2>
-          <button onClick={() => run(refreshStatus)}>Refresh</button>
+          <button
+            onClick={() => runTask("status", refreshStatus)}
+            disabled={loading.status}
+          >
+            {loading.status ? "Refreshing..." : "Refresh"}
+          </button>
         </div>
         {message && <p className="message">{message}</p>}
         <div className="table">
@@ -1112,10 +1342,27 @@ function App() {
               <span>{new Date(item.updatedAt).toLocaleString()}</span>
             </div>
           ))}
+          {!loading.status && (status?.processes || []).length === 0 && (
+            <div className="file-meta">No background processes recorded yet.</div>
+          )}
         </div>
       </section>
     </main>
   );
+}
+
+function getLicenseDisplayStatus(license: License) {
+  if (license.status === "revoked") {
+    return "revoked";
+  }
+  if (!license.endDate) {
+    return "open-ended";
+  }
+  const endDate = new Date(license.endDate);
+  if (!Number.isNaN(endDate.getTime()) && endDate.getTime() < Date.now()) {
+    return "expired";
+  }
+  return license.status || "ready";
 }
 
 createRoot(document.getElementById("root")!).render(<App />);

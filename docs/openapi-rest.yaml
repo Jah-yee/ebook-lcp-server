@@ -345,6 +345,34 @@ paths:
       responses:
         "200":
           description: License revoked
+  /api/v1/admin/audit:
+    get:
+      summary: List recent audit activity for the admin dashboard
+      operationId: listAdminAudit
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: X-2FA-Code
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Audit activity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditEntriesResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
   /api/v1/admin/users/{userId}/verify:
     post:
       summary: Mark a user as verified
@@ -913,6 +941,29 @@ components:
         endDate:
           type: string
           format: date-time
+    AuditEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        action:
+          type: string
+        actor:
+          type: string
+        resource:
+          type: string
+        resourceId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    AuditEntriesResponse:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditEntry"
     LicenseUserData:
       type: object
       properties:
