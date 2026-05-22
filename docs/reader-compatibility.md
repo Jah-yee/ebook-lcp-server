@@ -27,7 +27,7 @@ Use the shared export script to generate a fresh import bundle:
 sh scripts/export-reader-demo.sh swift /private/tmp/lcp-reader-demo-swift
 ```
 
-Then follow [examples/readium-swift/README.md](/Users/mehrbod/projects/golang/lcp/examples/readium-swift/README.md) for the import and verification flow.
+Then follow [examples/readium-swift/README.md](../examples/readium-swift/README.md) for the import and verification flow.
 
 ## Android
 
@@ -37,4 +37,4 @@ Use the shared export script to generate a fresh import bundle:
 sh scripts/export-reader-demo.sh android /private/tmp/lcp-reader-demo-android
 ```
 
-Then follow [examples/readium-android/README.md](/Users/mehrbod/projects/golang/lcp/examples/readium-android/README.md) for the import and verification flow.
+Then follow [examples/readium-android/README.md](../examples/readium-android/README.md) for the import and verification flow.
