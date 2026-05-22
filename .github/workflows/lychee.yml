@@ -23,6 +23,8 @@ jobs:
           args: >
             --verbose
             --no-progress
+            --root-dir .
+            --exclude-path reports/coverage
             './**/*.md'
             './**/*.html'
         env:
