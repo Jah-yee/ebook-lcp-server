@@ -1,0 +1,2570 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>jwt: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/amirhdev/ebook-lcp-server/internal/adapter/jwt/middleware.go (100.0%)</option>
+				
+				<option value="file1">github.com/amirhdev/ebook-lcp-server/internal/adapter/repository/audit/repository.go (88.4%)</option>
+				
+				<option value="file2">github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/audit.go (83.3%)</option>
+				
+				<option value="file3">github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/auth.go (45.5%)</option>
+				
+				<option value="file4">github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/docs.go (70.0%)</option>
+				
+				<option value="file5">github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/license_download.go (81.8%)</option>
+				
+				<option value="file6">github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/license_status.go (80.0%)</option>
+				
+				<option value="file7">github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/license_user.go (70.0%)</option>
+				
+				<option value="file8">github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/licenses.go (60.7%)</option>
+				
+				<option value="file9">github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/publications.go (68.3%)</option>
+				
+				<option value="file10">github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/tenants.go (75.8%)</option>
+				
+				<option value="file11">github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/users.go (76.7%)</option>
+				
+				<option value="file12">github.com/amirhdev/ebook-lcp-server/internal/audit/service.go (100.0%)</option>
+				
+				<option value="file13">github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go (87.8%)</option>
+				
+				<option value="file14">github.com/amirhdev/ebook-lcp-server/internal/config/config.go (100.0%)</option>
+				
+				<option value="file15">github.com/amirhdev/ebook-lcp-server/internal/observability/metrics.go (100.0%)</option>
+				
+				<option value="file16">github.com/amirhdev/ebook-lcp-server/internal/pkg/id/generator.go (75.0%)</option>
+				
+				<option value="file17">github.com/amirhdev/ebook-lcp-server/internal/pkg/loggers/logger.go (100.0%)</option>
+				
+				<option value="file18">github.com/amirhdev/ebook-lcp-server/internal/ratelimit/limiter.go (100.0%)</option>
+				
+				<option value="file19">github.com/amirhdev/ebook-lcp-server/internal/requestmeta/requestmeta.go (95.2%)</option>
+				
+				<option value="file20">github.com/amirhdev/ebook-lcp-server/internal/tenant/tenant.go (100.0%)</option>
+				
+				<option value="file21">github.com/amirhdev/ebook-lcp-server/internal/usecase/lcp/publication/usecase.go (75.3%)</option>
+				
+				<option value="file22">github.com/amirhdev/ebook-lcp-server/internal/webhook/webhook.go (82.4%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">// Package jwt provides JWT middleware utilities.
+package jwt
+
+import "net/http"
+
+// Middleware is a lightweight placeholder that forwards requests without
+// performing JWT verification. It keeps the package compilable while a proper
+// authentication layer is designed.
+type Middleware func(http.Handler) http.Handler
+
+// New returns a middleware that simply calls the next handler.
+func New(_ string) Middleware <span class="cov8" title="1">{
+        return func(next http.Handler) http.Handler </span><span class="cov8" title="1">{
+                return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                        next.ServeHTTP(w, r)
+                }</span>)
+        }
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package audit
+
+import (
+        "context"
+        "encoding/json"
+        "os"
+        "path/filepath"
+        "sync"
+
+        domain "github.com/amirhdev/ebook-lcp-server/internal/domain"
+)
+
+const maxAuditEntriesLimit = 100
+
+type Repository interface {
+        Save(ctx context.Context, entry *domain.AuditEntry) error
+        FindRecent(ctx context.Context, limit int) ([]*domain.AuditEntry, error)
+        FindRecentByTenant(ctx context.Context, tenantID string, limit int) ([]*domain.AuditEntry, error)
+}
+
+type repository struct {
+        mu      sync.RWMutex
+        entries []*domain.AuditEntry
+        path    string
+}
+
+func NewRepository() Repository <span class="cov8" title="1">{
+        return &amp;repository{}
+}</span>
+
+func NewPersistentRepository(path string) (Repository, error) <span class="cov8" title="1">{
+        repo := &amp;repository{path: path}
+        if err := repo.load(); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return repo, nil</span>
+}
+
+func (r *repository) Save(_ context.Context, entry *domain.AuditEntry) error <span class="cov8" title="1">{
+        r.mu.Lock()
+        defer r.mu.Unlock()
+        r.entries = append(r.entries, entry)
+        return r.persistLocked()
+}</span>
+
+func (r *repository) FindRecent(_ context.Context, limit int) ([]*domain.AuditEntry, error) <span class="cov8" title="1">{
+        r.mu.RLock()
+        defer r.mu.RUnlock()
+
+        effectiveLimit := sanitizeAuditLimit(limit)
+
+        result := make([]*domain.AuditEntry, 0)
+        for i := len(r.entries) - 1; i &gt;= 0 &amp;&amp; len(result) &lt; effectiveLimit; i-- </span><span class="cov8" title="1">{
+                result = append(result, r.entries[i])
+        }</span>
+
+        <span class="cov8" title="1">return result, nil</span>
+}
+
+func (r *repository) FindRecentByTenant(_ context.Context, tenantID string, limit int) ([]*domain.AuditEntry, error) <span class="cov8" title="1">{
+        r.mu.RLock()
+        defer r.mu.RUnlock()
+
+        effectiveLimit := sanitizeAuditLimit(limit)
+
+        result := make([]*domain.AuditEntry, 0)
+        for i := len(r.entries) - 1; i &gt;= 0 &amp;&amp; len(result) &lt; effectiveLimit; i-- </span><span class="cov8" title="1">{
+                if r.entries[i].TenantID == tenantID </span><span class="cov8" title="1">{
+                        result = append(result, r.entries[i])
+                }</span>
+        }
+
+        <span class="cov8" title="1">return result, nil</span>
+}
+
+func (r *repository) load() error <span class="cov8" title="1">{
+        if r.path == "" </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+        <span class="cov8" title="1">data, err := os.ReadFile(r.path)
+        if err != nil </span><span class="cov8" title="1">{
+                if os.IsNotExist(err) </span><span class="cov8" title="1">{
+                        return nil
+                }</span>
+                <span class="cov0" title="0">return err</span>
+        }
+        <span class="cov8" title="1">return json.Unmarshal(data, &amp;r.entries)</span>
+}
+
+func (r *repository) persistLocked() error <span class="cov8" title="1">{
+        if r.path == "" </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+        <span class="cov8" title="1">if err := os.MkdirAll(filepath.Dir(r.path), 0o755); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">data, err := json.MarshalIndent(r.entries, "", "  ")
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return os.WriteFile(r.path, data, 0o600)</span>
+}
+
+func sanitizeAuditLimit(limit int) int <span class="cov8" title="1">{
+        if limit &lt;= 0 || limit &gt; maxAuditEntriesLimit </span><span class="cov8" title="1">{
+                return maxAuditEntriesLimit
+        }</span>
+        <span class="cov8" title="1">return limit</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package rest
+
+import (
+        "net/http"
+        "strconv"
+
+        repo "github.com/amirhdev/ebook-lcp-server/internal/adapter/repository/audit"
+        "github.com/amirhdev/ebook-lcp-server/internal/tenant"
+)
+
+type AuditHandler struct {
+        repo repo.Repository
+}
+
+func NewAuditHandler(repo repo.Repository) *AuditHandler <span class="cov8" title="1">{
+        return &amp;AuditHandler{repo: repo}
+}</span>
+
+func (h *AuditHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodGet </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+                return
+        }</span>
+        <span class="cov8" title="1">limit, _ := strconv.Atoi(r.URL.Query().Get("limit"))
+        if limit &lt;= 0 </span><span class="cov8" title="1">{
+                limit = 100
+        }</span>
+        <span class="cov8" title="1">entries, err := h.repo.FindRecentByTenant(r.Context(), tenant.IDFromContext(r.Context()), limit)
+        if err != nil </span><span class="cov8" title="1">{
+                writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov8" title="1">writeJSON(w, http.StatusOK, map[string]any{"entries": entries})</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package rest
+
+import (
+        "encoding/json"
+        "net/http"
+        "strings"
+        "time"
+
+        "github.com/amirhdev/ebook-lcp-server/internal/auth"
+)
+
+type AuthHandler struct {
+        secret        string
+        adminUser     string
+        adminPass     string
+        publisherUser string
+        publisherPass string
+        admin2FACode  string
+        tenantID      string
+}
+
+type LoginRequest struct {
+        Username  string `json:"username"`
+        Password  string `json:"password"`
+        TwoFactor string `json:"twoFactor,omitempty"`
+}
+
+type LoginResponse struct {
+        Token     string    `json:"token"`
+        Role      string    `json:"role"`
+        Subject   string    `json:"subject"`
+        ExpiresAt time.Time `json:"expiresAt"`
+}
+
+func NewAuthHandler(secret, adminUser, adminPass, publisherUser, publisherPass, admin2FACode, tenantID string) *AuthHandler <span class="cov8" title="1">{
+        return &amp;AuthHandler{
+                secret:        strings.TrimSpace(secret),
+                adminUser:     strings.TrimSpace(adminUser),
+                adminPass:     strings.TrimSpace(adminPass),
+                publisherUser: strings.TrimSpace(publisherUser),
+                publisherPass: strings.TrimSpace(publisherPass),
+                admin2FACode:  strings.TrimSpace(admin2FACode),
+                tenantID:      strings.TrimSpace(tenantID),
+        }
+}</span>
+
+func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodPost </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">var req LoginRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid json body"})
+                return
+        }</span>
+        <span class="cov8" title="1">if req.Username == "" || req.Password == "" </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusBadRequest, map[string]string{"error": "username and password are required"})
+                return
+        }</span>
+        <span class="cov8" title="1">if h.adminUser == "" || h.adminPass == "" </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "login is not configured"})
+                return
+        }</span>
+        <span class="cov8" title="1">role := ""
+        switch </span>{
+        case req.Username == h.adminUser &amp;&amp; req.Password == h.adminPass:<span class="cov8" title="1">
+                role = "admin"
+                if h.admin2FACode != "" &amp;&amp; req.TwoFactor != h.admin2FACode </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusForbidden, map[string]string{"error": "invalid admin 2fa code"})
+                        return
+                }</span>
+        case h.publisherUser != "" &amp;&amp; req.Username == h.publisherUser &amp;&amp; req.Password == h.publisherPass:<span class="cov8" title="1">
+                role = "publisher"</span>
+        default:<span class="cov0" title="0">
+                writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "invalid username or password"})
+                return</span>
+        }
+        <span class="cov8" title="1">claims := auth.Claims{
+                Subject:  req.Username,
+                TenantID: h.tenantID,
+                Role:     role,
+                Roles:    []string{role},
+                Exp:      time.Now().Add(7 * 24 * time.Hour).Unix(),
+        }
+        token, err := auth.IssueBearerToken(h.secret, claims)
+        if err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov8" title="1">writeJSON(w, http.StatusOK, LoginResponse{
+                Token:     token,
+                Role:      claims.Role,
+                Subject:   claims.Subject,
+                ExpiresAt: time.Unix(claims.Exp, 0).UTC(),
+        })</span>
+}
+
+func (h *AuthHandler) Ping(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        if r.Method != http.MethodGet </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+                return
+        }</span>
+        <span class="cov0" title="0">writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package rest
+
+import (
+        "net/http"
+        "path/filepath"
+)
+
+func SwaggerYAML() http.HandlerFunc <span class="cov0" title="0">{
+        return staticFileHandler("docs/swagger.yaml", "text/yaml; charset=utf-8")
+}</span>
+
+func SwaggerJSON() http.HandlerFunc <span class="cov0" title="0">{
+        return staticFileHandler("docs/swagger.json", "application/json; charset=utf-8")
+}</span>
+
+func OpenAPIYAML() http.HandlerFunc <span class="cov0" title="0">{
+        return staticFileHandler("docs/openapi-rest.yaml", "text/yaml; charset=utf-8")
+}</span>
+
+func staticFileHandler(path, contentType string) http.HandlerFunc <span class="cov8" title="1">{
+        normalized := filepath.Clean(path)
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                if r.Method != http.MethodGet </span><span class="cov8" title="1">{
+                        writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+                        return
+                }</span>
+                <span class="cov8" title="1">w.Header().Set("Content-Type", contentType)
+                http.ServeFile(w, r, normalized)</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package rest
+
+import (
+        "context"
+        "net/http"
+        "strings"
+
+        usecaseLicense "github.com/amirhdev/ebook-lcp-server/internal/usecase/lcp/license"
+)
+
+type LCPLProvider interface {
+        GetLicense(ctx context.Context, id string) ([]byte, error)
+}
+
+type LicenseDownloadHandler struct {
+        licenses usecaseLicense.LicenseUsecase
+        lcp      LCPLProvider
+}
+
+func NewLicenseDownloadHandler(
+        licenses usecaseLicense.LicenseUsecase,
+        lcp LCPLProvider,
+) *LicenseDownloadHandler <span class="cov8" title="1">{
+        return &amp;LicenseDownloadHandler{
+                licenses: licenses,
+                lcp:      lcp,
+        }
+}</span>
+
+func (h *LicenseDownloadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodGet </span><span class="cov8" title="1">{
+                writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">licenseID, ok := extractLicenseIDForLCPL(r.URL.Path)
+        if !ok </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusNotFound, map[string]string{"error": "not found"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">lic, err := h.licenses.GetByID(r.Context(), licenseID)
+        if err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov8" title="1">if lic == nil </span><span class="cov8" title="1">{
+                writeJSON(w, http.StatusNotFound, map[string]string{"error": "license not found"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">lcpl := []byte(lic.LCPL)
+        if len(lcpl) == 0 </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusNotFound, map[string]string{"error": "license document not found"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/vnd.readium.lcp.license.v1.0+json")
+        w.Header().Set("Content-Disposition", `attachment; filename="`+licenseID+`.lcpl"`)
+        w.WriteHeader(http.StatusOK)
+        _, _ = w.Write(lcpl)</span>
+}
+
+func extractLicenseIDForLCPL(path string) (string, bool) <span class="cov8" title="1">{
+        path = strings.Trim(path, "/")
+
+        if strings.HasPrefix(path, "licenses/") &amp;&amp; strings.HasSuffix(path, ".lcpl") </span><span class="cov8" title="1">{
+                id := strings.TrimSuffix(strings.TrimPrefix(path, "licenses/"), ".lcpl")
+                id = strings.Trim(id, "/")
+                return id, id != ""
+        }</span>
+
+        <span class="cov8" title="1">if strings.HasPrefix(path, "api/v1/licenses/") &amp;&amp; strings.HasSuffix(path, "/lcpl") </span><span class="cov8" title="1">{
+                id := strings.TrimSuffix(strings.TrimPrefix(path, "api/v1/licenses/"), "/lcpl")
+                id = strings.Trim(id, "/")
+                return id, id != ""
+        }</span>
+
+        <span class="cov8" title="1">return "", false</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package rest
+
+import (
+        "encoding/json"
+        "net/http"
+        "strings"
+
+        usecaseLicense "github.com/amirhdev/ebook-lcp-server/internal/usecase/lcp/license"
+)
+
+type UpdatedField struct {
+        License string `json:"license"`
+        Status  string `json:"status"`
+}
+
+type LicenseStatusLink struct {
+        Rel  string `json:"rel"`
+        Href string `json:"href"`
+        Type string `json:"type,omitempty"`
+}
+
+type LicenseStatusDocumentResponse struct {
+        ID      string              `json:"id"`
+        Status  string              `json:"status"`
+        Message string              `json:"message,omitempty"`
+        Updated UpdatedField        `json:"updated"`
+        Links   []LicenseStatusLink `json:"links"`
+}
+
+func LicenseStatusDocument(licenses usecaseLicense.LicenseUsecase) http.HandlerFunc <span class="cov8" title="1">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                if r.Method != http.MethodGet </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+                        return
+                }</span>
+
+                <span class="cov8" title="1">licenseID := strings.TrimPrefix(r.URL.Path, "/licenses/")
+                licenseID = strings.TrimPrefix(licenseID, "api/v1/licenses/")
+                licenseID = strings.TrimSuffix(licenseID, "/status")
+                licenseID = strings.Trim(licenseID, "/")
+
+                if licenseID == "" </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusBadRequest, map[string]string{"error": "license id is required"})
+                        return
+                }</span>
+
+                <span class="cov8" title="1">lic, err := licenses.GetByID(r.Context(), licenseID)
+                if err != nil </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                        return
+                }</span>
+                <span class="cov8" title="1">if lic == nil </span><span class="cov8" title="1">{
+                        writeJSON(w, http.StatusNotFound, map[string]string{"error": "license not found"})
+                        return
+                }</span>
+
+                <span class="cov8" title="1">scheme := "https"
+                if forwarded := r.Header.Get("X-Forwarded-Proto"); forwarded != "" </span><span class="cov8" title="1">{
+                        scheme = forwarded
+                }</span>
+
+                <span class="cov8" title="1">host := r.Host
+                self := scheme + "://" + host + "/licenses/" + lic.ID + "/status"
+                licenseLink := scheme + "://" + host + "/licenses/" + lic.ID + ".lcpl"
+                status := lic.Status
+                if status == "" </span><span class="cov8" title="1">{
+                        status = "ready"
+                }</span>
+
+                <span class="cov8" title="1">w.Header().Set("Content-Type", "application/vnd.readium.license.status.v1.0+json")
+                w.WriteHeader(http.StatusOK)
+                _ = json.NewEncoder(w).Encode(LicenseStatusDocumentResponse{
+                        ID:      lic.ID,
+                        Status:  status,
+                        Message: "License is " + status + ".",
+                        Updated: UpdatedField{
+                                License: lic.ID,
+                                Status:  status,
+                        },
+                        Links: []LicenseStatusLink{
+                                {
+                                        Rel:  "self",
+                                        Href: self,
+                                        Type: "application/vnd.readium.license.status.v1.0+json",
+                                },
+                                {
+                                        Rel:  "license",
+                                        Href: licenseLink,
+                                        Type: "application/vnd.readium.lcp.license.v1.0+json",
+                                },
+                        },
+                })</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package rest
+
+import (
+        "crypto/sha256"
+        "encoding/hex"
+        "net/http"
+        "strings"
+
+        usecaseLicense "github.com/amirhdev/ebook-lcp-server/internal/usecase/lcp/license"
+)
+
+type userDataPayload struct {
+        ID             string `json:"id"`
+        Name           string `json:"name,omitempty"`
+        Email          string `json:"email,omitempty"`
+        PassphraseHash string `json:"passphrasehash"`
+        Hint           string `json:"hint,omitempty"`
+}
+
+func LicenseUserData(licenses usecaseLicense.LicenseUsecase) http.HandlerFunc <span class="cov8" title="1">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                if r.Method != http.MethodGet </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+                        return
+                }</span>
+
+                <span class="cov8" title="1">licenseID := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/api/v1/licenses/"), "/user")
+                licenseID = strings.Trim(licenseID, "/")
+                if licenseID == "" </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusBadRequest, map[string]string{"error": "license id is required"})
+                        return
+                }</span>
+
+                <span class="cov8" title="1">lic, err := licenses.GetByID(r.Context(), licenseID)
+                if err != nil </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                        return
+                }</span>
+                <span class="cov8" title="1">if lic == nil </span><span class="cov8" title="1">{
+                        writeJSON(w, http.StatusNotFound, map[string]string{"error": "license not found"})
+                        return
+                }</span>
+
+                <span class="cov8" title="1">payload := userDataPayload{
+                        ID:             lic.UserID,
+                        PassphraseHash: lcpPassphraseHash(lic.Passphrase),
+                        Hint:           lic.Hint,
+                }
+
+                writeJSON(w, http.StatusOK, payload)</span>
+        }
+}
+
+// lcpPassphraseHash returns the Readium LCP user key hash.
+// LCP requires SHA-256 here for interoperability with LCP-compliant readers.
+// This is not an account-password storage hash.
+func lcpPassphraseHash(value string) string <span class="cov8" title="1">{
+        sum := sha256.Sum256([]byte(value))
+        return hex.EncodeToString(sum[:])
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package rest
+
+import (
+        "encoding/json"
+        "net/http"
+        "strings"
+        "time"
+
+        "github.com/amirhdev/ebook-lcp-server/internal/domain/lcp"
+        usecaseLicense "github.com/amirhdev/ebook-lcp-server/internal/usecase/lcp/license"
+)
+
+type AdminLicensesHandler struct {
+        licenses usecaseLicense.LicenseUsecase
+}
+
+type licensePatchRequest struct {
+        EndDate *string `json:"endDate"`
+}
+
+type adminLicenseResponse struct {
+        ID             string     `json:"id"`
+        PublicationID  string     `json:"publicationID"`
+        UserID         string     `json:"userID"`
+        Passphrase     string     `json:"passphrase"`
+        Hint           string     `json:"hint"`
+        PublicationURL string     `json:"publicationURL"`
+        RightPrint     *int       `json:"rightPrint,omitempty"`
+        RightCopy      *int       `json:"rightCopy,omitempty"`
+        StartDate      *time.Time `json:"startDate,omitempty"`
+        EndDate        *time.Time `json:"endDate,omitempty"`
+        Status         string     `json:"status"`
+        CreatedAt      time.Time  `json:"createdAt"`
+}
+
+func NewAdminLicensesHandler(licenses usecaseLicense.LicenseUsecase) *AdminLicensesHandler <span class="cov8" title="1">{
+        return &amp;AdminLicensesHandler{licenses: licenses}
+}</span>
+
+func (h *AdminLicensesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        path := strings.Trim(strings.TrimPrefix(r.URL.Path, "/api/v1/admin/licenses"), "/")
+        if path == "" </span><span class="cov8" title="1">{
+                h.list(w, r)
+                return
+        }</span>
+
+        <span class="cov8" title="1">parts := strings.Split(path, "/")
+        licenseID := parts[0]
+        if len(parts) == 2 &amp;&amp; parts[1] == "revoke" </span><span class="cov8" title="1">{
+                h.revoke(w, r, licenseID)
+                return
+        }</span>
+        <span class="cov8" title="1">if len(parts) == 1 </span><span class="cov8" title="1">{
+                h.update(w, r, licenseID)
+                return
+        }</span>
+        <span class="cov0" title="0">http.NotFound(w, r)</span>
+}
+
+func (h *AdminLicensesHandler) list(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodGet </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+                return
+        }</span>
+        <span class="cov8" title="1">licenses, err := h.licenses.GetByPublication(r.Context(), nil)
+        if err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov8" title="1">items := make([]adminLicenseResponse, 0, len(licenses))
+        for _, lic := range licenses </span><span class="cov8" title="1">{
+                items = append(items, toAdminLicenseResponse(lic))
+        }</span>
+        <span class="cov8" title="1">writeJSON(w, http.StatusOK, map[string]any{"licenses": items})</span>
+}
+
+func (h *AdminLicensesHandler) update(w http.ResponseWriter, r *http.Request, id string) <span class="cov8" title="1">{
+        if r.Method != http.MethodPatch </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+                return
+        }</span>
+        <span class="cov8" title="1">var req licensePatchRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid json body"})
+                return
+        }</span>
+        <span class="cov8" title="1">var endDate *time.Time
+        if req.EndDate != nil &amp;&amp; strings.TrimSpace(*req.EndDate) != "" </span><span class="cov8" title="1">{
+                parsed, err := time.Parse(time.RFC3339, *req.EndDate)
+                if err != nil </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusBadRequest, map[string]string{"error": "endDate must be RFC3339"})
+                        return
+                }</span>
+                <span class="cov8" title="1">endDate = &amp;parsed</span>
+        }
+        <span class="cov8" title="1">lic, err := h.licenses.UpdateEndDate(r.Context(), id, endDate)
+        if err != nil </span><span class="cov0" title="0">{
+                if err.Error() == "license not found" </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusNotFound, map[string]string{"error": err.Error()})
+                        return
+                }</span>
+                <span class="cov0" title="0">writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+                return</span>
+        }
+        <span class="cov8" title="1">writeJSON(w, http.StatusOK, toAdminLicenseResponse(lic))</span>
+}
+
+func (h *AdminLicensesHandler) revoke(w http.ResponseWriter, r *http.Request, id string) <span class="cov8" title="1">{
+        if r.Method != http.MethodPost </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+                return
+        }</span>
+        <span class="cov8" title="1">if err := h.licenses.Revoke(r.Context(), id); err != nil </span><span class="cov0" title="0">{
+                if err.Error() == "license not found" </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusNotFound, map[string]string{"error": err.Error()})
+                        return
+                }</span>
+                <span class="cov0" title="0">writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+                return</span>
+        }
+        <span class="cov8" title="1">writeJSON(w, http.StatusOK, map[string]string{"status": "revoked"})</span>
+}
+
+func toAdminLicenseResponse(lic *lcp.License) adminLicenseResponse <span class="cov8" title="1">{
+        status := lic.Status
+        if status == "" </span><span class="cov0" title="0">{
+                status = "ready"
+        }</span>
+        <span class="cov8" title="1">return adminLicenseResponse{
+                ID:             lic.ID,
+                PublicationID:  lic.PublicationID,
+                UserID:         lic.UserID,
+                Passphrase:     lic.Passphrase,
+                Hint:           lic.Hint,
+                PublicationURL: lic.PublicationURL,
+                RightPrint:     lic.RightPrint,
+                RightCopy:      lic.RightCopy,
+                StartDate:      lic.StartDate,
+                EndDate:        lic.EndDate,
+                Status:         status,
+                CreatedAt:      lic.CreatedAt,
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package rest
+
+import (
+        "bytes"
+        "encoding/base64"
+        "encoding/json"
+        "fmt"
+        "net/http"
+        "strings"
+        "time"
+
+        "github.com/amirhdev/ebook-lcp-server/internal/auth"
+        "github.com/amirhdev/ebook-lcp-server/internal/domain/lcp"
+        "github.com/amirhdev/ebook-lcp-server/internal/pkg/id"
+        "github.com/amirhdev/ebook-lcp-server/internal/tenant"
+        usecasePublication "github.com/amirhdev/ebook-lcp-server/internal/usecase/lcp/publication"
+)
+
+type PublicationHandler struct {
+        repo   lcp.PublicationRepository
+        upload usecasePublication.PublicationUsecase
+}
+
+type PublicationRequest struct {
+        Title               string   `json:"title"`
+        Authors             []string `json:"authors"`
+        Language            string   `json:"language"`
+        Subjects            []string `json:"subjects"`
+        Tags                []string `json:"tags"`
+        RightPrint          *int     `json:"right_print"`
+        RightCopy           *int     `json:"right_copy"`
+        EncryptedURI        string   `json:"encrypted_uri"`
+        Checksum            string   `json:"checksum"`
+        LicenseDurationDays int      `json:"license_duration_days"`
+        File                string   `json:"file"`
+        Status              string   `json:"status"`
+}
+
+type PublicationPatchRequest struct {
+        Title               *string  `json:"title,omitempty"`
+        Authors             []string `json:"authors,omitempty"`
+        Language            *string  `json:"language,omitempty"`
+        Subjects            []string `json:"subjects,omitempty"`
+        Tags                []string `json:"tags,omitempty"`
+        RightPrint          *int     `json:"right_print,omitempty"`
+        RightCopy           *int     `json:"right_copy,omitempty"`
+        EncryptedURI        *string  `json:"encrypted_uri,omitempty"`
+        Checksum            *string  `json:"checksum,omitempty"`
+        LicenseDurationDays *int     `json:"license_duration_days,omitempty"`
+        Status              *string  `json:"status,omitempty"`
+}
+
+func NewPublicationHandler(repo lcp.PublicationRepository, upload usecasePublication.PublicationUsecase) *PublicationHandler <span class="cov8" title="1">{
+        return &amp;PublicationHandler{repo: repo, upload: upload}
+}</span>
+
+func (h *PublicationHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        path := strings.Trim(r.URL.Path, "/")
+        parts := strings.Split(path, "/")
+        if len(parts) &lt; 3 || parts[0] != "api" || parts[1] != "v1" || parts[2] != "publications" </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusNotFound, map[string]string{"error": "not found"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">switch </span>{
+        case len(parts) == 3:<span class="cov8" title="1">
+                switch r.Method </span>{
+                case http.MethodGet:<span class="cov8" title="1">
+                        h.list(w, r)</span>
+                case http.MethodPost:<span class="cov8" title="1">
+                        h.requirePublisherOrAdmin(w, r, h.create)</span>
+                default:<span class="cov0" title="0">
+                        writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})</span>
+                }
+                <span class="cov8" title="1">return</span>
+        case len(parts) == 4:<span class="cov8" title="1">
+                switch r.Method </span>{
+                case http.MethodGet:<span class="cov8" title="1">
+                        h.get(w, r, parts[3])</span>
+                case http.MethodPatch:<span class="cov8" title="1">
+                        h.requirePublisherOrAdmin(w, r, func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{ h.patch(w, r, parts[3]) }</span>)
+                default:<span class="cov0" title="0">
+                        writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})</span>
+                }
+                <span class="cov8" title="1">return</span>
+        case len(parts) == 5 &amp;&amp; parts[4] == "activate" &amp;&amp; r.Method == http.MethodPost:<span class="cov0" title="0">
+                h.requirePublisherOrAdmin(w, r, func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{ h.setStatus(w, r, parts[3], "active") }</span>)
+                <span class="cov0" title="0">return</span>
+        case len(parts) == 5 &amp;&amp; parts[4] == "deactivate" &amp;&amp; r.Method == http.MethodPost:<span class="cov8" title="1">
+                h.requirePublisherOrAdmin(w, r, func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{ h.setStatus(w, r, parts[3], "inactive") }</span>)
+                <span class="cov8" title="1">return</span>
+        default:<span class="cov0" title="0">
+                writeJSON(w, http.StatusNotFound, map[string]string{"error": "not found"})</span>
+        }
+}
+
+func (h *PublicationHandler) requirePublisherOrAdmin(w http.ResponseWriter, r *http.Request, next func(http.ResponseWriter, *http.Request)) <span class="cov8" title="1">{
+        claims, ok := auth.FromContext(r.Context())
+        if !ok || (!claimsHasRole(claims, "admin") &amp;&amp; !claimsHasRole(claims, "publisher")) </span><span class="cov8" title="1">{
+                writeJSON(w, http.StatusForbidden, map[string]string{"error": "publisher or admin role required"})
+                return
+        }</span>
+        <span class="cov8" title="1">next(w, r)</span>
+}
+
+func (h *PublicationHandler) list(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if r.Method != http.MethodGet </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+                return
+        }</span>
+        <span class="cov8" title="1">pubs, err := h.repo.FindAll(r.Context())
+        if err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov8" title="1">tenantID := tenant.IDFromContext(r.Context())
+        filtered := make([]*lcp.Publication, 0, len(pubs))
+        for _, pub := range pubs </span><span class="cov8" title="1">{
+                if pub.TenantID == "" || pub.TenantID == tenantID </span><span class="cov8" title="1">{
+                        filtered = append(filtered, pub)
+                }</span>
+        }
+        <span class="cov8" title="1">writeJSON(w, http.StatusOK, map[string]interface{}{"publications": filtered})</span>
+}
+
+func (h *PublicationHandler) get(w http.ResponseWriter, r *http.Request, id string) <span class="cov8" title="1">{
+        pub, err := h.repo.FindByID(r.Context(), id)
+        if err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov8" title="1">if pub == nil </span><span class="cov8" title="1">{
+                writeJSON(w, http.StatusNotFound, map[string]string{"error": "publication not found"})
+                return
+        }</span>
+        <span class="cov8" title="1">if pub.TenantID != "" &amp;&amp; pub.TenantID != tenant.IDFromContext(r.Context()) </span><span class="cov8" title="1">{
+                writeJSON(w, http.StatusNotFound, map[string]string{"error": "publication not found"})
+                return
+        }</span>
+        <span class="cov8" title="1">writeJSON(w, http.StatusOK, pub)</span>
+}
+
+func (h *PublicationHandler) create(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        var req PublicationRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid json body"})
+                return
+        }</span>
+        <span class="cov8" title="1">if req.Title == "" </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusBadRequest, map[string]string{"error": "title is required"})
+                return
+        }</span>
+        <span class="cov8" title="1">if err := validatePublicationRights(req.RightPrint, req.RightCopy); err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov8" title="1">pub := &amp;lcp.Publication{
+                TenantID:            tenant.IDFromContext(r.Context()),
+                Title:               req.Title,
+                Authors:             req.Authors,
+                Language:            req.Language,
+                Subjects:            req.Subjects,
+                Tags:                req.Tags,
+                Status:              defaultPublicationStatus(req.Status),
+                RightPrint:          req.RightPrint,
+                RightCopy:           req.RightCopy,
+                EncryptedURI:        req.EncryptedURI,
+                Checksum:            req.Checksum,
+                LicenseDurationDays: req.LicenseDurationDays,
+                CreatedAt:           time.Now(),
+                UpdatedAt:           time.Now(),
+        }
+
+        if req.File != "" </span><span class="cov8" title="1">{
+                raw, err := base64.StdEncoding.DecodeString(req.File)
+                if err != nil </span><span class="cov8" title="1">{
+                        writeJSON(w, http.StatusBadRequest, map[string]string{"error": "file must be base64 encoded"})
+                        return
+                }</span>
+                <span class="cov8" title="1">processed, err := h.upload.UploadAndEncrypt(r.Context(), req.Title, bytes.NewReader(raw))
+                if err != nil </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                        return
+                }</span>
+                <span class="cov8" title="1">pub.ID = processed.ID
+                pub.FilePath = processed.FilePath
+                pub.EncryptedPath = processed.EncryptedPath
+                pub.EncryptedURI = processed.EncryptedURI
+                if pub.Status == "" </span><span class="cov0" title="0">{
+                        pub.Status = "active"
+                }</span>
+        } else<span class="cov8" title="1"> if req.EncryptedURI == "" </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusBadRequest, map[string]string{"error": "file or encrypted_uri is required"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">if pub.ID == "" </span><span class="cov8" title="1">{
+                pub.ID = id.New()
+        }</span>
+        <span class="cov8" title="1">if pub.EncryptedURI == "" </span><span class="cov8" title="1">{
+                pub.EncryptedURI = pub.EncryptedPath
+        }</span>
+        <span class="cov8" title="1">if pub.LicenseDurationDays == 0 </span><span class="cov8" title="1">{
+                pub.LicenseDurationDays = 30
+        }</span>
+
+        <span class="cov8" title="1">if err := h.repo.Save(r.Context(), pub); err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov8" title="1">writeJSON(w, http.StatusCreated, pub)</span>
+}
+
+func (h *PublicationHandler) patch(w http.ResponseWriter, r *http.Request, id string) <span class="cov8" title="1">{
+        pub, err := h.repo.FindByID(r.Context(), id)
+        if err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov8" title="1">if pub == nil </span><span class="cov8" title="1">{
+                writeJSON(w, http.StatusNotFound, map[string]string{"error": "publication not found"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">var req PublicationPatchRequest
+        if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid json body"})
+                return
+        }</span>
+        <span class="cov8" title="1">if err := validatePublicationRights(req.RightPrint, req.RightCopy); err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov8" title="1">if req.Title != nil </span><span class="cov8" title="1">{
+                pub.Title = *req.Title
+        }</span>
+        <span class="cov8" title="1">if req.Language != nil </span><span class="cov0" title="0">{
+                pub.Language = *req.Language
+        }</span>
+        <span class="cov8" title="1">if req.EncryptedURI != nil </span><span class="cov0" title="0">{
+                pub.EncryptedURI = *req.EncryptedURI
+        }</span>
+        <span class="cov8" title="1">if req.Checksum != nil </span><span class="cov0" title="0">{
+                pub.Checksum = *req.Checksum
+        }</span>
+        <span class="cov8" title="1">if req.LicenseDurationDays != nil </span><span class="cov0" title="0">{
+                pub.LicenseDurationDays = *req.LicenseDurationDays
+        }</span>
+        <span class="cov8" title="1">if req.Status != nil </span><span class="cov0" title="0">{
+                pub.Status = *req.Status
+        }</span>
+        <span class="cov8" title="1">if req.Authors != nil </span><span class="cov0" title="0">{
+                pub.Authors = req.Authors
+        }</span>
+        <span class="cov8" title="1">if req.Subjects != nil </span><span class="cov0" title="0">{
+                pub.Subjects = req.Subjects
+        }</span>
+        <span class="cov8" title="1">if req.Tags != nil </span><span class="cov0" title="0">{
+                pub.Tags = req.Tags
+        }</span>
+        <span class="cov8" title="1">if req.RightPrint != nil </span><span class="cov0" title="0">{
+                pub.RightPrint = req.RightPrint
+        }</span>
+        <span class="cov8" title="1">if req.RightCopy != nil </span><span class="cov8" title="1">{
+                pub.RightCopy = req.RightCopy
+        }</span>
+
+        <span class="cov8" title="1">pub.UpdatedAt = time.Now()
+        if err := h.repo.Save(r.Context(), pub); err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov8" title="1">writeJSON(w, http.StatusOK, pub)</span>
+}
+
+func (h *PublicationHandler) setStatus(w http.ResponseWriter, r *http.Request, id, status string) <span class="cov8" title="1">{
+        pub, err := h.repo.FindByID(r.Context(), id)
+        if err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov8" title="1">if pub == nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusNotFound, map[string]string{"error": "publication not found"})
+                return
+        }</span>
+        <span class="cov8" title="1">pub.Status = status
+        pub.UpdatedAt = time.Now()
+        if err := h.repo.Save(r.Context(), pub); err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov8" title="1">writeJSON(w, http.StatusOK, pub)</span>
+}
+
+func defaultPublicationStatus(status string) string <span class="cov8" title="1">{
+        if strings.TrimSpace(status) == "" </span><span class="cov8" title="1">{
+                return "active"
+        }</span>
+        <span class="cov8" title="1">return strings.TrimSpace(strings.ToLower(status))</span>
+}
+
+func validatePublicationRights(rightPrint, rightCopy *int) error <span class="cov8" title="1">{
+        if rightPrint != nil &amp;&amp; *rightPrint &lt; 0 </span><span class="cov8" title="1">{
+                return fmt.Errorf("right_print must be zero or positive")
+        }</span>
+        <span class="cov8" title="1">if rightCopy != nil &amp;&amp; *rightCopy &lt; 0 </span><span class="cov0" title="0">{
+                return fmt.Errorf("right_copy must be zero or positive")
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func claimsHasRole(claims *auth.Claims, role string) bool <span class="cov8" title="1">{
+        role = strings.ToLower(role)
+        if claims == nil </span><span class="cov0" title="0">{
+                return false
+        }</span>
+        <span class="cov8" title="1">if strings.ToLower(claims.Role) == role </span><span class="cov8" title="1">{
+                return true
+        }</span>
+        <span class="cov8" title="1">for _, candidate := range claims.Roles </span><span class="cov8" title="1">{
+                if strings.ToLower(candidate) == role </span><span class="cov8" title="1">{
+                        return true
+                }</span>
+        }
+        <span class="cov8" title="1">return false</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package rest
+
+import (
+        "encoding/json"
+        "net/http"
+        "os"
+        "path/filepath"
+        "strings"
+        "sync"
+        "time"
+)
+
+type TenantRecord struct {
+        ID            string    `json:"id"`
+        Name          string    `json:"name"`
+        APIKeys       []APIKey  `json:"apiKeys,omitempty"`
+        WebhookURLs   []string  `json:"webhookUrls,omitempty"`
+        StoragePrefix string    `json:"storagePrefix,omitempty"`
+        RateLimitRPM  int       `json:"rateLimitRpm,omitempty"`
+        CreatedAt     time.Time `json:"createdAt"`
+        UpdatedAt     time.Time `json:"updatedAt"`
+}
+
+type APIKey struct {
+        Key     string `json:"key"`
+        Subject string `json:"subject"`
+        Role    string `json:"role"`
+}
+
+type TenantStore struct {
+        path    string
+        mu      sync.Mutex
+        tenants map[string]*TenantRecord
+}
+
+func NewTenantStore(dataDir, defaultTenantID string) *TenantStore <span class="cov8" title="1">{
+        store := &amp;TenantStore{
+                path:    filepath.Join(strings.TrimSpace(dataDir), "tenants.json"),
+                tenants: map[string]*TenantRecord{},
+        }
+        store.load(defaultTenantID)
+        return store
+}</span>
+
+func (s *TenantStore) load(defaultTenantID string) <span class="cov8" title="1">{
+        if s.path != "" </span><span class="cov8" title="1">{
+                if raw, err := os.ReadFile(s.path); err == nil </span><span class="cov0" title="0">{
+                        var items []*TenantRecord
+                        if json.Unmarshal(raw, &amp;items) == nil </span><span class="cov0" title="0">{
+                                for _, tenant := range items </span><span class="cov0" title="0">{
+                                        s.tenants[tenant.ID] = tenant
+                                }</span>
+                        }
+                }
+        }
+        <span class="cov8" title="1">if len(s.tenants) == 0 </span><span class="cov8" title="1">{
+                now := time.Now().UTC()
+                id := strings.TrimSpace(defaultTenantID)
+                if id == "" </span><span class="cov0" title="0">{
+                        id = "default"
+                }</span>
+                <span class="cov8" title="1">s.tenants[id] = &amp;TenantRecord{ID: id, Name: id, CreatedAt: now, UpdatedAt: now}</span>
+        }
+}
+
+func (s *TenantStore) save() error <span class="cov8" title="1">{
+        if s.path == "" </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+        <span class="cov8" title="1">if err := os.MkdirAll(filepath.Dir(s.path), 0o755); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">items := make([]*TenantRecord, 0, len(s.tenants))
+        for _, tenant := range s.tenants </span><span class="cov8" title="1">{
+                items = append(items, tenant)
+        }</span>
+        <span class="cov8" title="1">raw, err := json.MarshalIndent(items, "", "  ")
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return os.WriteFile(s.path, raw, 0o600)</span>
+}
+
+func (s *TenantStore) List() []*TenantRecord <span class="cov8" title="1">{
+        s.mu.Lock()
+        defer s.mu.Unlock()
+        items := make([]*TenantRecord, 0, len(s.tenants))
+        for _, tenant := range s.tenants </span><span class="cov8" title="1">{
+                copy := *tenant
+                items = append(items, &amp;copy)
+        }</span>
+        <span class="cov8" title="1">return items</span>
+}
+
+func (s *TenantStore) Get(id string) (*TenantRecord, bool) <span class="cov8" title="1">{
+        s.mu.Lock()
+        defer s.mu.Unlock()
+        tenant, ok := s.tenants[id]
+        if !ok </span><span class="cov8" title="1">{
+                return nil, false
+        }</span>
+        <span class="cov8" title="1">copy := *tenant
+        return &amp;copy, true</span>
+}
+
+func (s *TenantStore) Upsert(tenant *TenantRecord) error <span class="cov8" title="1">{
+        s.mu.Lock()
+        defer s.mu.Unlock()
+        now := time.Now().UTC()
+        if existing, ok := s.tenants[tenant.ID]; ok </span><span class="cov0" title="0">{
+                tenant.CreatedAt = existing.CreatedAt
+        }</span> else<span class="cov8" title="1"> if tenant.CreatedAt.IsZero() </span><span class="cov8" title="1">{
+                tenant.CreatedAt = now
+        }</span>
+        <span class="cov8" title="1">tenant.UpdatedAt = now
+        copy := *tenant
+        s.tenants[tenant.ID] = &amp;copy
+        return s.save()</span>
+}
+
+func (s *TenantStore) Delete(id string) bool <span class="cov8" title="1">{
+        s.mu.Lock()
+        defer s.mu.Unlock()
+        if _, ok := s.tenants[id]; !ok </span><span class="cov0" title="0">{
+                return false
+        }</span>
+        <span class="cov8" title="1">delete(s.tenants, id)
+        return s.save() == nil</span>
+}
+
+type AdminTenantsHandler struct {
+        store *TenantStore
+}
+
+func NewAdminTenantsHandler(store *TenantStore) *AdminTenantsHandler <span class="cov8" title="1">{
+        return &amp;AdminTenantsHandler{store: store}
+}</span>
+
+func (h *AdminTenantsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        trimmed := strings.Trim(strings.TrimPrefix(r.URL.Path, "/api/v1/admin/tenants"), "/")
+        if trimmed == "" </span><span class="cov8" title="1">{
+                h.collection(w, r)
+                return
+        }</span>
+        <span class="cov8" title="1">h.item(w, r, trimmed)</span>
+}
+
+func (h *AdminTenantsHandler) collection(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        switch r.Method </span>{
+        case http.MethodGet:<span class="cov0" title="0">
+                writeJSON(w, http.StatusOK, map[string]any{"tenants": h.store.List()})</span>
+        case http.MethodPost:<span class="cov8" title="1">
+                var req TenantRecord
+                if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil || strings.TrimSpace(req.ID) == "" </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusBadRequest, map[string]string{"error": "tenant id is required"})
+                        return
+                }</span>
+                <span class="cov8" title="1">req.ID = strings.TrimSpace(req.ID)
+                if req.Name == "" </span><span class="cov0" title="0">{
+                        req.Name = req.ID
+                }</span>
+                <span class="cov8" title="1">if err := h.store.Upsert(&amp;req); err != nil </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                        return
+                }</span>
+                <span class="cov8" title="1">writeJSON(w, http.StatusCreated, req)</span>
+        default:<span class="cov8" title="1">
+                writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})</span>
+        }
+}
+
+func (h *AdminTenantsHandler) item(w http.ResponseWriter, r *http.Request, id string) <span class="cov8" title="1">{
+        switch r.Method </span>{
+        case http.MethodGet:<span class="cov8" title="1">
+                tenant, ok := h.store.Get(id)
+                if !ok </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusNotFound, map[string]string{"error": "tenant not found"})
+                        return
+                }</span>
+                <span class="cov8" title="1">writeJSON(w, http.StatusOK, tenant)</span>
+        case http.MethodPut:<span class="cov8" title="1">
+                var req TenantRecord
+                if err := json.NewDecoder(r.Body).Decode(&amp;req); err != nil </span><span class="cov8" title="1">{
+                        writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid json body"})
+                        return
+                }</span>
+                <span class="cov8" title="1">req.ID = id
+                if req.Name == "" </span><span class="cov0" title="0">{
+                        req.Name = id
+                }</span>
+                <span class="cov8" title="1">if err := h.store.Upsert(&amp;req); err != nil </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                        return
+                }</span>
+                <span class="cov8" title="1">writeJSON(w, http.StatusOK, req)</span>
+        case http.MethodDelete:<span class="cov8" title="1">
+                if !h.store.Delete(id) </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusNotFound, map[string]string{"error": "tenant not found"})
+                        return
+                }</span>
+                <span class="cov8" title="1">w.WriteHeader(http.StatusNoContent)</span>
+        default:<span class="cov0" title="0">
+                writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package rest
+
+import (
+        "encoding/json"
+        "net/http"
+        "os"
+        "path/filepath"
+        "strings"
+        "sync"
+        "time"
+)
+
+type AdminUser struct {
+        ID        string    `json:"id"`
+        Email     string    `json:"email"`
+        Name      string    `json:"name"`
+        Role      string    `json:"role"`
+        Verified  bool      `json:"verified"`
+        CreatedAt time.Time `json:"createdAt"`
+        UpdatedAt time.Time `json:"updatedAt"`
+}
+
+type AdminUsersResponse struct {
+        Users []*AdminUser `json:"users"`
+}
+
+type AdminUserStore struct {
+        path  string
+        mu    sync.Mutex
+        users []*AdminUser
+}
+
+func NewAdminUserStore(dataDir string) *AdminUserStore <span class="cov8" title="1">{
+        store := &amp;AdminUserStore{path: filepath.Join(strings.TrimSpace(dataDir), "users.json")}
+        store.load()
+        return store
+}</span>
+
+func (s *AdminUserStore) load() <span class="cov8" title="1">{
+        if s.path == "" </span><span class="cov0" title="0">{
+                s.users = defaultAdminUsers()
+                return
+        }</span>
+        <span class="cov8" title="1">b, err := os.ReadFile(s.path)
+        if err != nil </span><span class="cov8" title="1">{
+                s.users = defaultAdminUsers()
+                return
+        }</span>
+        <span class="cov8" title="1">if err := json.Unmarshal(b, &amp;s.users); err != nil || len(s.users) == 0 </span><span class="cov8" title="1">{
+                s.users = defaultAdminUsers()
+        }</span>
+}
+
+func (s *AdminUserStore) save() error <span class="cov8" title="1">{
+        if s.path == "" </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+        <span class="cov8" title="1">if err := os.MkdirAll(filepath.Dir(s.path), 0o755); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">b, err := json.MarshalIndent(s.users, "", "  ")
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return os.WriteFile(s.path, b, 0o600)</span>
+}
+
+func (s *AdminUserStore) List() []*AdminUser <span class="cov8" title="1">{
+        s.mu.Lock()
+        defer s.mu.Unlock()
+        items := make([]*AdminUser, len(s.users))
+        copy(items, s.users)
+        return items
+}</span>
+
+func (s *AdminUserStore) SetVerified(id string, verified bool) (*AdminUser, error) <span class="cov8" title="1">{
+        s.mu.Lock()
+        defer s.mu.Unlock()
+        for _, u := range s.users </span><span class="cov8" title="1">{
+                if u.ID == id </span><span class="cov8" title="1">{
+                        u.Verified = verified
+                        u.UpdatedAt = time.Now().UTC()
+                        return u, s.save()
+                }</span>
+        }
+        <span class="cov8" title="1">return nil, nil</span>
+}
+
+func defaultAdminUsers() []*AdminUser <span class="cov8" title="1">{
+        now := time.Now().UTC()
+        return []*AdminUser{
+                {
+                        ID:        "publisher-01",
+                        Email:     "publisher01@yourdomain.com",
+                        Name:      "Publisher One",
+                        Role:      "publisher",
+                        Verified:  true,
+                        CreatedAt: now,
+                        UpdatedAt: now,
+                },
+                {
+                        ID:        "reader-01",
+                        Email:     "reader01@yourdomain.com",
+                        Name:      "Reader One",
+                        Role:      "user",
+                        Verified:  false,
+                        CreatedAt: now,
+                        UpdatedAt: now,
+                },
+        }
+}</span>
+
+type AdminUsersHandler struct {
+        store *AdminUserStore
+}
+
+func NewAdminUsersHandler(store *AdminUserStore) *AdminUsersHandler <span class="cov8" title="1">{
+        return &amp;AdminUsersHandler{store: store}
+}</span>
+
+func (h *AdminUsersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        if !strings.HasPrefix(r.URL.Path, "/api/v1/admin/users") </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusNotFound, map[string]string{"error": "not found"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">trimmed := strings.Trim(strings.TrimPrefix(r.URL.Path, "/api/v1/admin/users"), "/")
+        switch </span>{
+        case trimmed == "":<span class="cov8" title="1">
+                if r.Method != http.MethodGet </span><span class="cov0" title="0">{
+                        writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+                        return
+                }</span>
+                <span class="cov8" title="1">writeJSON(w, http.StatusOK, AdminUsersResponse{Users: h.store.List()})</span>
+        case strings.HasSuffix(trimmed, "/verify") &amp;&amp; r.Method == http.MethodPost:<span class="cov8" title="1">
+                h.toggle(w, strings.TrimSuffix(trimmed, "/verify"), true)</span>
+        case strings.HasSuffix(trimmed, "/unverify") &amp;&amp; r.Method == http.MethodPost:<span class="cov8" title="1">
+                h.toggle(w, strings.TrimSuffix(trimmed, "/unverify"), false)</span>
+        default:<span class="cov0" title="0">
+                writeJSON(w, http.StatusNotFound, map[string]string{"error": "not found"})</span>
+        }
+}
+
+func (h *AdminUsersHandler) toggle(w http.ResponseWriter, id string, verified bool) <span class="cov8" title="1">{
+        id = strings.Trim(id, "/")
+        if id == "" </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusBadRequest, map[string]string{"error": "user id is required"})
+                return
+        }</span>
+        <span class="cov8" title="1">user, err := h.store.SetVerified(id, verified)
+        if err != nil </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov8" title="1">if user == nil </span><span class="cov8" title="1">{
+                writeJSON(w, http.StatusNotFound, map[string]string{"error": "user not found"})
+                return
+        }</span>
+        <span class="cov8" title="1">writeJSON(w, http.StatusOK, user)</span>
+}
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package audit
+
+import (
+        "context"
+        "time"
+
+        repo "github.com/amirhdev/ebook-lcp-server/internal/adapter/repository/audit"
+        "github.com/amirhdev/ebook-lcp-server/internal/auth"
+        domain "github.com/amirhdev/ebook-lcp-server/internal/domain"
+        "github.com/amirhdev/ebook-lcp-server/internal/pkg/id"
+        "github.com/amirhdev/ebook-lcp-server/internal/tenant"
+)
+
+type Recorder interface {
+        Record(ctx context.Context, action, resource, resourceID string) error
+}
+
+type Service struct {
+        repo repo.Repository
+}
+
+func NewService(repo repo.Repository) *Service <span class="cov8" title="1">{
+        return &amp;Service{repo: repo}
+}</span>
+
+func (s *Service) Record(ctx context.Context, action, resource, resourceID string) error <span class="cov8" title="1">{
+        actor := "system"
+        if claims, ok := auth.FromContext(ctx); ok &amp;&amp; claims.Subject != "" </span><span class="cov8" title="1">{
+                actor = claims.Subject
+        }</span>
+        <span class="cov8" title="1">return s.repo.Save(ctx, &amp;domain.AuditEntry{
+                ID:         id.New(),
+                TenantID:   tenant.IDFromContext(ctx),
+                Action:     action,
+                Actor:      actor,
+                Resource:   resource,
+                ResourceID: resourceID,
+                CreatedAt:  time.Now(),
+        })</span>
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package auth
+
+import (
+        "context"
+        "crypto/hmac"
+        "crypto/sha256"
+        "encoding/base64"
+        "encoding/json"
+        "errors"
+        "net/http"
+        "strings"
+        "sync"
+        "time"
+
+        "github.com/amirhdev/ebook-lcp-server/internal/observability"
+        "github.com/amirhdev/ebook-lcp-server/internal/ratelimit"
+)
+
+type contextKey string
+
+const claimsContextKey contextKey = "auth.claims"
+
+var (
+        ErrMissingToken = errors.New("missing bearer token")
+        ErrInvalidToken = errors.New("invalid bearer token")
+        ErrExpiredToken = errors.New("expired bearer token")
+        ErrForbidden    = errors.New("insufficient permissions")
+)
+
+type Claims struct {
+        Subject  string   `json:"sub"`
+        TenantID string   `json:"tenantId,omitempty"`
+        Role     string   `json:"role"`
+        Roles    []string `json:"roles,omitempty"`
+        Exp      int64    `json:"exp,omitempty"`
+}
+
+type (
+        APIKeyResolver    func(key string) (*Claims, bool)
+        RateLimitResolver func(tenantID string) int
+)
+
+func FromContext(ctx context.Context) (*Claims, bool) <span class="cov8" title="1">{
+        claims, ok := ctx.Value(claimsContextKey).(*Claims)
+        return claims, ok
+}</span>
+
+func WithClaims(ctx context.Context, claims *Claims) context.Context <span class="cov8" title="1">{
+        return context.WithValue(ctx, claimsContextKey, claims)
+}</span>
+
+type Middleware struct {
+        secret       string
+        admin2FACode string
+        limiter      *ratelimit.Limiter
+        apiKeys      APIKeyResolver
+        tenantLimits RateLimitResolver
+        tenantBucket map[string]*ratelimit.Limiter
+        mu           sync.Mutex
+}
+
+func New(secret, admin2FACode string, limiter *ratelimit.Limiter) *Middleware <span class="cov8" title="1">{
+        return &amp;Middleware{
+                secret:       strings.TrimSpace(secret),
+                admin2FACode: strings.TrimSpace(admin2FACode),
+                limiter:      limiter,
+                tenantBucket: map[string]*ratelimit.Limiter{},
+        }
+}</span>
+
+func (m *Middleware) WithAPIKeys(resolver APIKeyResolver) *Middleware <span class="cov8" title="1">{
+        m.apiKeys = resolver
+        return m
+}</span>
+
+func (m *Middleware) WithTenantRateLimits(resolver RateLimitResolver) *Middleware <span class="cov8" title="1">{
+        m.tenantLimits = resolver
+        return m
+}</span>
+
+func (m *Middleware) RequireRole(roles ...string) func(http.Handler) http.Handler <span class="cov8" title="1">{
+        allowed := map[string]struct{}{}
+        for _, role := range roles </span><span class="cov8" title="1">{
+                allowed[strings.ToLower(role)] = struct{}{}
+        }</span>
+
+        <span class="cov8" title="1">return func(next http.Handler) http.Handler </span><span class="cov8" title="1">{
+                return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                        claims, err := m.parseRequest(r)
+                        if err != nil </span><span class="cov8" title="1">{
+                                writeAuthError(w, http.StatusUnauthorized, err)
+                                return
+                        }</span>
+                        <span class="cov8" title="1">if !roleAllowed(claims, allowed) </span><span class="cov8" title="1">{
+                                writeAuthError(w, http.StatusForbidden, ErrForbidden)
+                                return
+                        }</span>
+                        <span class="cov8" title="1">if hasRole(claims, "admin") &amp;&amp; m.admin2FACode != "" &amp;&amp; requiresTwoFactor(r) &amp;&amp; r.Header.Get("X-2FA-Code") != m.admin2FACode </span><span class="cov8" title="1">{
+                                writeAuthError(w, http.StatusForbidden, errors.New("invalid admin 2fa code"))
+                                return
+                        }</span>
+                        <span class="cov8" title="1">if !m.allow(r, claims) </span><span class="cov8" title="1">{
+                                writeAuthError(w, http.StatusTooManyRequests, errors.New("rate limit exceeded"))
+                                return
+                        }</span>
+                        <span class="cov8" title="1">next.ServeHTTP(w, r.WithContext(WithClaims(r.Context(), claims)))</span>
+                })
+        }
+}
+
+func rateLimitKey(r *http.Request, claims *Claims) string <span class="cov8" title="1">{
+        if claims != nil &amp;&amp; claims.Subject != "" </span><span class="cov8" title="1">{
+                return claims.Subject
+        }</span>
+        <span class="cov0" title="0">return r.RemoteAddr</span>
+}
+
+func (m *Middleware) allow(r *http.Request, claims *Claims) bool <span class="cov8" title="1">{
+        if claims != nil &amp;&amp; claims.TenantID != "" &amp;&amp; m.tenantLimits != nil </span><span class="cov8" title="1">{
+                if limit := m.tenantLimits(claims.TenantID); limit &gt; 0 </span><span class="cov8" title="1">{
+                        m.mu.Lock()
+                        limiter, ok := m.tenantBucket[claims.TenantID]
+                        if !ok </span><span class="cov8" title="1">{
+                                limiter = ratelimit.New(limit, time.Minute)
+                                m.tenantBucket[claims.TenantID] = limiter
+                        }</span>
+                        <span class="cov8" title="1">m.mu.Unlock()
+                        return limiter.Allow(rateLimitKey(r, claims))</span>
+                }
+        }
+        <span class="cov8" title="1">return m.limiter.Allow(rateLimitKey(r, claims))</span>
+}
+
+func (m *Middleware) Optional(next http.Handler) http.Handler <span class="cov8" title="1">{
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                claims, err := m.parseRequest(r)
+                if err == nil </span><span class="cov8" title="1">{
+                        r = r.WithContext(WithClaims(r.Context(), claims))
+                }</span>
+                <span class="cov8" title="1">next.ServeHTTP(w, r)</span>
+        })
+}
+
+func (m *Middleware) parseRequest(r *http.Request) (*Claims, error) <span class="cov8" title="1">{
+        if key := strings.TrimSpace(r.Header.Get("X-API-Key")); key != "" &amp;&amp; m.apiKeys != nil </span><span class="cov8" title="1">{
+                if claims, ok := m.apiKeys(key); ok </span><span class="cov8" title="1">{
+                        return claims, nil
+                }</span>
+                <span class="cov0" title="0">return nil, ErrInvalidToken</span>
+        }
+        <span class="cov8" title="1">header := r.Header.Get("Authorization")
+        if !strings.HasPrefix(strings.ToLower(header), "bearer ") </span><span class="cov8" title="1">{
+                return nil, ErrMissingToken
+        }</span>
+        <span class="cov8" title="1">return ParseBearerToken(strings.TrimSpace(header[7:]), m.secret)</span>
+}
+
+func ParseBearerToken(token, secret string) (*Claims, error) <span class="cov8" title="1">{
+        if secret == "" </span><span class="cov0" title="0">{
+                return nil, errors.New("jwt secret is not configured")
+        }</span>
+        <span class="cov8" title="1">parts := strings.Split(token, ".")
+        if len(parts) != 3 </span><span class="cov0" title="0">{
+                return nil, ErrInvalidToken
+        }</span>
+
+        <span class="cov8" title="1">signingInput := parts[0] + "." + parts[1]
+        expected := sign(signingInput, secret)
+        if !hmac.Equal([]byte(expected), []byte(parts[2])) </span><span class="cov8" title="1">{
+                return nil, ErrInvalidToken
+        }</span>
+
+        <span class="cov8" title="1">payload, err := base64.RawURLEncoding.DecodeString(parts[1])
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, ErrInvalidToken
+        }</span>
+        <span class="cov8" title="1">var claims Claims
+        if err := json.Unmarshal(payload, &amp;claims); err != nil </span><span class="cov0" title="0">{
+                return nil, ErrInvalidToken
+        }</span>
+        <span class="cov8" title="1">if claims.Exp &gt; 0 &amp;&amp; time.Now().Unix() &gt; claims.Exp </span><span class="cov0" title="0">{
+                return nil, ErrExpiredToken
+        }</span>
+        <span class="cov8" title="1">if claims.Role == "" &amp;&amp; len(claims.Roles) &gt; 0 </span><span class="cov0" title="0">{
+                claims.Role = claims.Roles[0]
+        }</span>
+        <span class="cov8" title="1">return &amp;claims, nil</span>
+}
+
+func IssueBearerToken(secret string, claims Claims) (string, error) <span class="cov8" title="1">{
+        if secret == "" </span><span class="cov0" title="0">{
+                return "", errors.New("jwt secret is not configured")
+        }</span>
+        <span class="cov8" title="1">header, err := json.Marshal(map[string]string{"alg": "HS256", "typ": "JWT"})
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">payload, err := json.Marshal(claims)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">signingInput := base64.RawURLEncoding.EncodeToString(header) + "." + base64.RawURLEncoding.EncodeToString(payload)
+        return signingInput + "." + sign(signingInput, secret), nil</span>
+}
+
+func roleAllowed(claims *Claims, allowed map[string]struct{}) bool <span class="cov8" title="1">{
+        if len(allowed) == 0 </span><span class="cov0" title="0">{
+                return true
+        }</span>
+        <span class="cov8" title="1">for _, role := range append(claims.Roles, claims.Role) </span><span class="cov8" title="1">{
+                if _, ok := allowed[strings.ToLower(role)]; ok </span><span class="cov8" title="1">{
+                        return true
+                }</span>
+        }
+        <span class="cov8" title="1">return false</span>
+}
+
+func hasRole(claims *Claims, role string) bool <span class="cov8" title="1">{
+        return roleAllowed(claims, map[string]struct{}{strings.ToLower(role): {}})
+}</span>
+
+func requiresTwoFactor(r *http.Request) bool <span class="cov8" title="1">{
+        return strings.HasPrefix(r.URL.Path, "/api/v1/admin/")
+}</span>
+
+func sign(input, secret string) string <span class="cov8" title="1">{
+        mac := hmac.New(sha256.New, []byte(secret))
+        mac.Write([]byte(input))
+        return base64.RawURLEncoding.EncodeToString(mac.Sum(nil))
+}</span>
+
+func writeAuthError(w http.ResponseWriter, status int, err error) <span class="cov8" title="1">{
+        observability.IncAuthFailed()
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(status)
+        _ = json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+}</span>
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package config
+
+import (
+        "os"
+        "strconv"
+        "strings"
+)
+
+type Config struct {
+        Database struct {
+                DSN string
+        }
+        LCP struct {
+                Profile     string // "basic" or "production"
+                Certificate string // Path to X.509 certificate
+                PrivateKey  string // Path to private key
+                ProviderURI string
+                CoreURL     string
+                CoreUser    string
+                CorePass    string
+                Storage     struct {
+                        Mode string // "fs" or "s3"
+                        FS   struct {
+                                Directory string
+                        }
+                        S3 struct {
+                                Endpoint         string
+                                PublicEndpoint   string
+                                Region           string
+                                Bucket           string
+                                AccessKey        string
+                                SecretKey        string
+                                UseSSL           bool
+                                SignedURLTTLSecs int
+                        }
+                }
+        }
+        JWT struct {
+                Secret       string
+                Admin2FACode string
+        }
+        Admin struct {
+                Username string
+                Password string
+        }
+        Publisher struct {
+                Username string
+                Password string
+        }
+        Tenant struct {
+                DefaultID string
+        }
+        Server struct {
+                Port          string
+                PublicBaseURL string
+                StatusBaseURL string
+                RateLimitRPM  int
+        }
+        Webhooks struct {
+                URLs           []string
+                Secret         string
+                MaxAttempts    int
+                RetryBackoffMS int
+        }
+        DataDir string
+}
+
+func LoadConfig() (*Config, error) <span class="cov8" title="1">{
+        cfg := &amp;Config{}
+        cfg.Database.DSN = os.Getenv("DB_DSN")
+        cfg.LCP.Profile = os.Getenv("LCP_PROFILE")
+        cfg.LCP.Certificate = os.Getenv("LCP_CERTIFICATE")
+        cfg.LCP.PrivateKey = os.Getenv("LCP_PRIVATE_KEY")
+        cfg.LCP.ProviderURI = os.Getenv("LCP_PROVIDER_URI")
+        cfg.LCP.CoreURL = os.Getenv("LCP_CORE_URL")
+        cfg.LCP.CoreUser = os.Getenv("LCP_CORE_USER")
+        cfg.LCP.CorePass = os.Getenv("LCP_CORE_PASSWORD")
+        cfg.LCP.Storage.Mode = os.Getenv("LCP_STORAGE_MODE")
+        cfg.LCP.Storage.FS.Directory = os.Getenv("LCP_STORAGE_FS_DIR")
+        cfg.LCP.Storage.S3.Region = os.Getenv("LCP_S3_REGION")
+        cfg.LCP.Storage.S3.Endpoint = os.Getenv("LCP_S3_ENDPOINT")
+        cfg.LCP.Storage.S3.PublicEndpoint = os.Getenv("LCP_S3_PUBLIC_ENDPOINT")
+        cfg.LCP.Storage.S3.Bucket = os.Getenv("LCP_S3_BUCKET")
+        cfg.LCP.Storage.S3.AccessKey = os.Getenv("LCP_S3_ACCESS_KEY")
+        cfg.LCP.Storage.S3.SecretKey = os.Getenv("LCP_S3_SECRET_KEY")
+        cfg.LCP.Storage.S3.UseSSL = os.Getenv("LCP_S3_USE_SSL") == "true"
+        cfg.LCP.Storage.S3.SignedURLTTLSecs = envInt("LCP_S3_SIGNED_URL_TTL_SECONDS", 900)
+        cfg.JWT.Secret = os.Getenv("JWT_SECRET")
+        cfg.JWT.Admin2FACode = os.Getenv("ADMIN_2FA_CODE")
+        cfg.Admin.Username = os.Getenv("ADMIN_USERNAME")
+        cfg.Admin.Password = os.Getenv("ADMIN_PASSWORD")
+        cfg.Publisher.Username = os.Getenv("PUBLISHER_USERNAME")
+        cfg.Publisher.Password = os.Getenv("PUBLISHER_PASSWORD")
+        cfg.Tenant.DefaultID = defaultString(os.Getenv("DEFAULT_TENANT_ID"), "default")
+        cfg.Server.Port = os.Getenv("SERVER_PORT")
+        cfg.Server.PublicBaseURL = os.Getenv("PUBLIC_BASE_URL")
+        cfg.Server.StatusBaseURL = os.Getenv("STATUS_BASE_URL")
+        cfg.Server.RateLimitRPM = envInt("RATE_LIMIT_RPM", 600)
+        cfg.Webhooks.URLs = splitCSV(os.Getenv("WEBHOOK_URLS"))
+        cfg.Webhooks.Secret = os.Getenv("WEBHOOK_SECRET")
+        cfg.Webhooks.MaxAttempts = envInt("WEBHOOK_MAX_ATTEMPTS", 3)
+        cfg.Webhooks.RetryBackoffMS = envInt("WEBHOOK_RETRY_BACKOFF_MS", 250)
+        cfg.DataDir = os.Getenv("DATA_DIR")
+        return cfg, nil
+}</span>
+
+func envInt(name string, fallback int) int <span class="cov8" title="1">{
+        value, err := strconv.Atoi(os.Getenv(name))
+        if err != nil || value &lt;= 0 </span><span class="cov8" title="1">{
+                return fallback
+        }</span>
+        <span class="cov8" title="1">return value</span>
+}
+
+func splitCSV(value string) []string <span class="cov8" title="1">{
+        if strings.TrimSpace(value) == "" </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+        <span class="cov8" title="1">parts := strings.Split(value, ",")
+        items := make([]string, 0, len(parts))
+        for _, part := range parts </span><span class="cov8" title="1">{
+                if item := strings.TrimSpace(part); item != "" </span><span class="cov8" title="1">{
+                        items = append(items, item)
+                }</span>
+        }
+        <span class="cov8" title="1">return items</span>
+}
+
+func defaultString(value, fallback string) string <span class="cov8" title="1">{
+        if strings.TrimSpace(value) == "" </span><span class="cov8" title="1">{
+                return fallback
+        }</span>
+        <span class="cov8" title="1">return strings.TrimSpace(value)</span>
+}
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package observability
+
+import "sync/atomic"
+
+type Snapshot struct {
+        WebhookOK       int64
+        WebhookFailed   int64
+        S3StoreOK       int64
+        S3StoreFailed   int64
+        S3OpenOK        int64
+        S3OpenFailed    int64
+        S3SignedURLOK   int64
+        S3SignedURLFail int64
+        LicensesOK      int64
+        LicensesFailed  int64
+        AuthFailed      int64
+}
+
+var (
+        webhookOK       atomic.Int64
+        webhookFailed   atomic.Int64
+        s3StoreOK       atomic.Int64
+        s3StoreFailed   atomic.Int64
+        s3OpenOK        atomic.Int64
+        s3OpenFailed    atomic.Int64
+        s3SignedURLOK   atomic.Int64
+        s3SignedURLFail atomic.Int64
+        licensesOK      atomic.Int64
+        licensesFailed  atomic.Int64
+        authFailed      atomic.Int64
+)
+
+func IncWebhookOK()       <span class="cov8" title="1">{ webhookOK.Add(1) }</span>
+func IncWebhookFailed()   <span class="cov8" title="1">{ webhookFailed.Add(1) }</span>
+func IncS3StoreOK()       <span class="cov8" title="1">{ s3StoreOK.Add(1) }</span>
+func IncS3StoreFailed()   <span class="cov8" title="1">{ s3StoreFailed.Add(1) }</span>
+func IncS3OpenOK()        <span class="cov8" title="1">{ s3OpenOK.Add(1) }</span>
+func IncS3OpenFailed()    <span class="cov8" title="1">{ s3OpenFailed.Add(1) }</span>
+func IncS3SignedURLOK()   <span class="cov8" title="1">{ s3SignedURLOK.Add(1) }</span>
+func IncS3SignedURLFail() <span class="cov8" title="1">{ s3SignedURLFail.Add(1) }</span>
+func IncLicensesOK()      <span class="cov8" title="1">{ licensesOK.Add(1) }</span>
+func IncLicensesFailed()  <span class="cov8" title="1">{ licensesFailed.Add(1) }</span>
+func IncAuthFailed()      <span class="cov8" title="1">{ authFailed.Add(1) }</span>
+
+func Current() Snapshot <span class="cov8" title="1">{
+        return Snapshot{
+                WebhookOK:       webhookOK.Load(),
+                WebhookFailed:   webhookFailed.Load(),
+                S3StoreOK:       s3StoreOK.Load(),
+                S3StoreFailed:   s3StoreFailed.Load(),
+                S3OpenOK:        s3OpenOK.Load(),
+                S3OpenFailed:    s3OpenFailed.Load(),
+                S3SignedURLOK:   s3SignedURLOK.Load(),
+                S3SignedURLFail: s3SignedURLFail.Load(),
+                LicensesOK:      licensesOK.Load(),
+                LicensesFailed:  licensesFailed.Load(),
+                AuthFailed:      authFailed.Load(),
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">package id
+
+import (
+        "crypto/rand"
+        "encoding/hex"
+)
+
+// New generates a random identifier.
+func New() string <span class="cov8" title="1">{
+        buf := make([]byte, 16)
+        if _, err := rand.Read(buf); err != nil </span><span class="cov0" title="0">{
+                return ""
+        }</span>
+        <span class="cov8" title="1">return hex.EncodeToString(buf)</span>
+}
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">// Package loggers provides structured logging utilities used across the application,
+package loggers
+
+import "log"
+
+// New returns the default logger used across the service.
+func New() *log.Logger <span class="cov8" title="1">{
+        return log.Default()
+}</span>
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package ratelimit
+
+import (
+        "sync"
+        "time"
+)
+
+type Limiter struct {
+        mu        sync.Mutex
+        limit     int
+        window    time.Duration
+        requests  map[string]int
+        resetTime time.Time
+}
+
+func New(limit int, window time.Duration) *Limiter <span class="cov8" title="1">{
+        return &amp;Limiter{
+                limit:     limit,
+                window:    window,
+                requests:  map[string]int{},
+                resetTime: time.Now().Add(window),
+        }
+}</span>
+
+func (l *Limiter) Allow(key string) bool <span class="cov8" title="1">{
+        if l == nil || l.limit &lt;= 0 </span><span class="cov8" title="1">{
+                return true
+        }</span>
+        <span class="cov8" title="1">l.mu.Lock()
+        defer l.mu.Unlock()
+        now := time.Now()
+        if now.After(l.resetTime) </span><span class="cov8" title="1">{
+                l.requests = map[string]int{}
+                l.resetTime = now.Add(l.window)
+        }</span>
+        <span class="cov8" title="1">l.requests[key]++
+        return l.requests[key] &lt;= l.limit</span>
+}
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">package requestmeta
+
+import (
+        "context"
+        "crypto/rand"
+        "encoding/hex"
+        "log/slog"
+        "net/http"
+        "time"
+)
+
+type contextKey string
+
+const requestIDKey contextKey = "request.id"
+
+func IDFromContext(ctx context.Context) string <span class="cov8" title="1">{
+        id, _ := ctx.Value(requestIDKey).(string)
+        return id
+}</span>
+
+func Middleware(logger *slog.Logger) func(http.Handler) http.Handler <span class="cov8" title="1">{
+        if logger == nil </span><span class="cov8" title="1">{
+                logger = slog.Default()
+        }</span>
+        <span class="cov8" title="1">return func(next http.Handler) http.Handler </span><span class="cov8" title="1">{
+                return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                        requestID := r.Header.Get("X-Request-ID")
+                        if requestID == "" </span><span class="cov8" title="1">{
+                                requestID = newID()
+                        }</span>
+                        <span class="cov8" title="1">start := time.Now()
+                        rec := &amp;statusRecorder{ResponseWriter: w, status: http.StatusOK}
+                        rec.Header().Set("X-Request-ID", requestID)
+                        ctx := context.WithValue(r.Context(), requestIDKey, requestID)
+                        next.ServeHTTP(rec, r.WithContext(ctx))
+                        logger.Info(
+                                "http_request",
+                                "request_id", requestID,
+                                "method", r.Method,
+                                "path", r.URL.Path,
+                                "status", rec.status,
+                                "duration_ms", time.Since(start).Milliseconds(),
+                        )</span>
+                })
+        }
+}
+
+type statusRecorder struct {
+        http.ResponseWriter
+        status int
+}
+
+func (w *statusRecorder) WriteHeader(status int) <span class="cov8" title="1">{
+        w.status = status
+        w.ResponseWriter.WriteHeader(status)
+}</span>
+
+func newID() string <span class="cov8" title="1">{
+        var raw [16]byte
+        if _, err := rand.Read(raw[:]); err != nil </span><span class="cov0" title="0">{
+                return time.Now().UTC().Format("20060102150405.000000000")
+        }</span>
+        <span class="cov8" title="1">return hex.EncodeToString(raw[:])</span>
+}
+</pre>
+		
+		<pre class="file" id="file20" style="display: none">package tenant
+
+import (
+        "context"
+
+        "github.com/amirhdev/ebook-lcp-server/internal/auth"
+)
+
+func IDFromContext(ctx context.Context) string <span class="cov8" title="1">{
+        if claims, ok := auth.FromContext(ctx); ok &amp;&amp; claims.TenantID != "" </span><span class="cov8" title="1">{
+                return claims.TenantID
+        }</span>
+        <span class="cov8" title="1">return "default"</span>
+}
+</pre>
+		
+		<pre class="file" id="file21" style="display: none">package publication
+
+import (
+        "archive/zip"
+        "bytes"
+        "context"
+        "fmt"
+        "io"
+        "log"
+        "net/http"
+        "os"
+        "path/filepath"
+        "strings"
+        "time"
+
+        auditservice "github.com/amirhdev/ebook-lcp-server/internal/audit"
+        "github.com/amirhdev/ebook-lcp-server/internal/domain/lcp"
+        "github.com/amirhdev/ebook-lcp-server/internal/lcp/encrypt"
+        "github.com/amirhdev/ebook-lcp-server/internal/pkg/id"
+        publicationstorage "github.com/amirhdev/ebook-lcp-server/internal/storage"
+        "github.com/amirhdev/ebook-lcp-server/internal/tenant"
+        "github.com/amirhdev/ebook-lcp-server/internal/webhook"
+)
+
+type PublicationUsecase interface {
+        UploadAndEncrypt(ctx context.Context, title string, file io.Reader) (*lcp.Publication, error)
+        GetAll(ctx context.Context) ([]*lcp.Publication, error)
+        GetByID(ctx context.Context, id string) (*lcp.Publication, error)
+}
+
+type publicationUsecase struct {
+        repo  lcp.PublicationRepository
+        enc   encrypt.Encrypter
+        store publicationstorage.PublicationStorage
+        hooks webhook.Publisher
+        audit auditservice.Recorder
+}
+
+func NewPublicationUsecase(repo lcp.PublicationRepository, enc encrypt.Encrypter, store publicationstorage.PublicationStorage, hooks webhook.Publisher, audit auditservice.Recorder) PublicationUsecase <span class="cov8" title="1">{
+        if store == nil </span><span class="cov8" title="1">{
+                store = publicationstorage.NewFilesystemPublicationStorage()
+        }</span>
+        <span class="cov8" title="1">if hooks == nil </span><span class="cov8" title="1">{
+                hooks = webhook.NopPublisher{}
+        }</span>
+        <span class="cov8" title="1">return &amp;publicationUsecase{repo: repo, enc: enc, store: store, hooks: hooks, audit: audit}</span>
+}
+
+func (u *publicationUsecase) UploadAndEncrypt(ctx context.Context, title string, file io.Reader) (*lcp.Publication, error) <span class="cov8" title="1">{
+        if title == "" || file == nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("title and file are required")
+        }</span>
+
+        <span class="cov8" title="1">pubID := id.New()
+        raw, err := io.ReadAll(file)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">tempExt := detectPublicationExt(raw)
+        tempPath := filepath.Join(os.TempDir(), pubID+tempExt)
+        out, err := os.Create(tempPath)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">if _, err := out.Write(raw); err != nil </span><span class="cov0" title="0">{
+                _ = out.Close()
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">if err := out.Close(); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        // Encrypt using lcpencrypt
+        <span class="cov8" title="1">encryptedPath, err := u.enc.Encrypt(tempPath, pubID, title)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">encryptedURI, err := u.store.StoreEncrypted(ctx, encryptedPath, pubID)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">sourcePath := filepath.Join(filepath.Dir(encryptedPath), pubID+tempExt)
+        if err := os.WriteFile(sourcePath, raw, 0o644); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        // Store publication metadata
+        <span class="cov8" title="1">pub := &amp;lcp.Publication{
+                ID:            pubID,
+                TenantID:      tenant.IDFromContext(ctx),
+                Title:         title,
+                Status:        "active",
+                FilePath:      sourcePath,
+                EncryptedPath: encryptedPath,
+                EncryptedURI:  encryptedURI,
+                CreatedAt:     time.Now(),
+                UpdatedAt:     time.Now(),
+        }
+        err = u.repo.Save(ctx, pub)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">_ = u.hooks.Publish(ctx, webhook.Event{
+                Type:      webhook.EventPublicationUploaded,
+                CreatedAt: time.Now(),
+                Data: map[string]string{
+                        "id":    pub.ID,
+                        "title": pub.Title,
+                },
+        })
+        if u.audit != nil </span><span class="cov0" title="0">{
+                _ = u.audit.Record(ctx, "publication.uploaded", "publication", pub.ID)
+        }</span>
+
+        <span class="cov8" title="1">return pub, nil</span>
+}
+
+func detectPublicationExt(raw []byte) string <span class="cov8" title="1">{
+        if bytes.HasPrefix(raw, []byte("%PDF-")) </span><span class="cov8" title="1">{
+                return ".pdf"
+        }</span>
+        <span class="cov8" title="1">if strings.HasPrefix(httpDetectContentType(raw), "application/zip") </span><span class="cov8" title="1">{
+                if ext := detectZipPublicationExt(raw); ext != "" </span><span class="cov8" title="1">{
+                        return ext
+                }</span>
+                <span class="cov0" title="0">return ".epub"</span>
+        }
+        <span class="cov0" title="0">return ".pdf"</span>
+}
+
+func detectZipPublicationExt(raw []byte) string <span class="cov8" title="1">{
+        readerAt := bytes.NewReader(raw)
+        zr, err := zip.NewReader(readerAt, int64(len(raw)))
+        if err != nil </span><span class="cov0" title="0">{
+                return ""
+        }</span>
+        <span class="cov8" title="1">for _, f := range zr.File </span><span class="cov8" title="1">{
+                if f.Name == "mimetype" </span><span class="cov8" title="1">{
+                        rc, err := f.Open()
+                        if err != nil </span><span class="cov0" title="0">{
+                                return ""
+                        }</span>
+                        <span class="cov8" title="1">defer func() </span><span class="cov8" title="1">{
+                                if err := rc.Close(); err != nil </span><span class="cov0" title="0">{
+                                        log.Printf("close rows: %v", err)
+                                }</span>
+                        }()
+                        <span class="cov8" title="1">mimeBytes, err := io.ReadAll(rc)
+                        if err != nil </span><span class="cov0" title="0">{
+                                return ""
+                        }</span>
+                        <span class="cov8" title="1">if string(mimeBytes) == "application/epub+zip" </span><span class="cov8" title="1">{
+                                return ".epub"
+                        }</span>
+                }
+        }
+        <span class="cov0" title="0">return ".epub"</span>
+}
+
+func httpDetectContentType(raw []byte) string <span class="cov8" title="1">{
+        if len(raw) &gt; 512 </span><span class="cov0" title="0">{
+                raw = raw[:512]
+        }</span>
+        <span class="cov8" title="1">return http.DetectContentType(raw)</span>
+}
+
+func (u *publicationUsecase) GetAll(ctx context.Context) ([]*lcp.Publication, error) <span class="cov8" title="1">{
+        pubs, err := u.repo.FindAll(ctx)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">tenantID := tenant.IDFromContext(ctx)
+        filtered := make([]*lcp.Publication, 0, len(pubs))
+        for _, pub := range pubs </span><span class="cov8" title="1">{
+                if pub.TenantID == "" || pub.TenantID == tenantID </span><span class="cov8" title="1">{
+                        filtered = append(filtered, pub)
+                }</span>
+        }
+        <span class="cov8" title="1">return filtered, nil</span>
+}
+
+func (u *publicationUsecase) GetByID(ctx context.Context, id string) (*lcp.Publication, error) <span class="cov8" title="1">{
+        pub, err := u.repo.FindByID(ctx, id)
+        if err != nil || pub == nil </span><span class="cov0" title="0">{
+                return pub, err
+        }</span>
+        <span class="cov8" title="1">if pub.TenantID != "" &amp;&amp; pub.TenantID != tenant.IDFromContext(ctx) </span><span class="cov8" title="1">{
+                return nil, nil
+        }</span>
+        <span class="cov8" title="1">return pub, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file22" style="display: none">package webhook
+
+import (
+        "bytes"
+        "context"
+        "crypto/hmac"
+        "crypto/sha256"
+        "encoding/hex"
+        "encoding/json"
+        "fmt"
+        "net/http"
+        "os"
+        "path/filepath"
+        "sync"
+        "time"
+
+        "github.com/amirhdev/ebook-lcp-server/internal/observability"
+)
+
+const (
+        EventPublicationUploaded = "publication.uploaded"
+        EventLicenseCreated      = "license.created"
+        EventLicenseRevoked      = "license.revoked"
+)
+
+type Event struct {
+        Type      string    `json:"type"`
+        CreatedAt time.Time `json:"createdAt"`
+        Data      any       `json:"data"`
+}
+
+type Failure struct {
+        URL       string    `json:"url"`
+        EventType string    `json:"eventType"`
+        Attempts  int       `json:"attempts"`
+        Error     string    `json:"error"`
+        CreatedAt time.Time `json:"createdAt"`
+}
+
+type Publisher interface {
+        Publish(ctx context.Context, event Event) error
+}
+
+type NopPublisher struct{}
+
+func (NopPublisher) Publish(context.Context, Event) error <span class="cov8" title="1">{
+        return nil
+}</span>
+
+type HTTPPublisher struct {
+        urls        []string
+        secret      string
+        client      *http.Client
+        maxAttempts int
+        backoff     time.Duration
+        failures    FailureRecorder
+        urlsFor     func(context.Context) []string
+}
+
+type FailureRecorder interface {
+        Record(context.Context, Failure) error
+}
+
+type MemoryFailureRecorder struct {
+        mu       sync.Mutex
+        failures []Failure
+}
+
+func (r *MemoryFailureRecorder) Record(_ context.Context, failure Failure) error <span class="cov8" title="1">{
+        r.mu.Lock()
+        defer r.mu.Unlock()
+        r.failures = append(r.failures, failure)
+        return nil
+}</span>
+
+func (r *MemoryFailureRecorder) List() []Failure <span class="cov8" title="1">{
+        r.mu.Lock()
+        defer r.mu.Unlock()
+        items := make([]Failure, len(r.failures))
+        copy(items, r.failures)
+        return items
+}</span>
+
+type PersistentFailureRecorder struct {
+        path string
+        mu   sync.Mutex
+}
+
+func NewPersistentFailureRecorder(path string) *PersistentFailureRecorder <span class="cov8" title="1">{
+        return &amp;PersistentFailureRecorder{path: path}
+}</span>
+
+func (r *PersistentFailureRecorder) Record(_ context.Context, failure Failure) error <span class="cov8" title="1">{
+        r.mu.Lock()
+        defer r.mu.Unlock()
+        var failures []Failure
+        if raw, err := os.ReadFile(r.path); err == nil </span><span class="cov0" title="0">{
+                if err := json.Unmarshal(raw, &amp;failures); err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+        } else<span class="cov8" title="1"> if !os.IsNotExist(err) </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">failures = append(failures, failure)
+        if err := os.MkdirAll(filepath.Dir(r.path), 0o755); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">raw, err := json.MarshalIndent(failures, "", "  ")
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return os.WriteFile(r.path, raw, 0o600)</span>
+}
+
+func NewHTTPPublisher(urls []string, secret string) Publisher <span class="cov8" title="1">{
+        return NewHTTPPublisherWithOptions(urls, secret, 3, 250*time.Millisecond, nil)
+}</span>
+
+func NewHTTPPublisherWithOptions(urls []string, secret string, maxAttempts int, backoff time.Duration, failures FailureRecorder) Publisher <span class="cov8" title="1">{
+        if maxAttempts &lt;= 0 </span><span class="cov0" title="0">{
+                maxAttempts = 1
+        }</span>
+        <span class="cov8" title="1">if backoff &lt; 0 </span><span class="cov0" title="0">{
+                backoff = 0
+        }</span>
+        <span class="cov8" title="1">return &amp;HTTPPublisher{
+                urls:        append([]string(nil), urls...),
+                secret:      secret,
+                client:      &amp;http.Client{Timeout: 5 * time.Second},
+                maxAttempts: maxAttempts,
+                backoff:     backoff,
+                failures:    failures,
+        }</span>
+}
+
+func (p *HTTPPublisher) WithURLResolver(resolver func(context.Context) []string) *HTTPPublisher <span class="cov8" title="1">{
+        p.urlsFor = resolver
+        return p
+}</span>
+
+func (p *HTTPPublisher) Publish(ctx context.Context, event Event) error <span class="cov8" title="1">{
+        body, err := json.Marshal(event)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">targets := p.urls
+        if p.urlsFor != nil </span><span class="cov8" title="1">{
+                if tenantTargets := p.urlsFor(ctx); len(tenantTargets) &gt; 0 </span><span class="cov8" title="1">{
+                        targets = tenantTargets
+                }</span>
+        }
+        <span class="cov8" title="1">for _, target := range targets </span><span class="cov8" title="1">{
+                var deliveryErr error
+                for attempt := 1; attempt &lt;= p.maxAttempts; attempt++ </span><span class="cov8" title="1">{
+                        deliveryErr = p.deliver(ctx, target, body)
+                        if deliveryErr == nil </span><span class="cov8" title="1">{
+                                break</span>
+                        }
+                        <span class="cov8" title="1">if attempt &lt; p.maxAttempts &amp;&amp; p.backoff &gt; 0 </span><span class="cov0" title="0">{
+                                select </span>{
+                                case &lt;-ctx.Done():<span class="cov0" title="0">
+                                        return ctx.Err()</span>
+                                case &lt;-time.After(time.Duration(attempt) * p.backoff):<span class="cov0" title="0"></span>
+                                }
+                        }
+                }
+                <span class="cov8" title="1">if deliveryErr != nil </span><span class="cov8" title="1">{
+                        observability.IncWebhookFailed()
+                        if p.failures != nil </span><span class="cov8" title="1">{
+                                _ = p.failures.Record(ctx, Failure{
+                                        URL:       target,
+                                        EventType: event.Type,
+                                        Attempts:  p.maxAttempts,
+                                        Error:     deliveryErr.Error(),
+                                        CreatedAt: time.Now().UTC(),
+                                })
+                        }</span>
+                        <span class="cov8" title="1">return deliveryErr</span>
+                }
+                <span class="cov8" title="1">observability.IncWebhookOK()</span>
+        }
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (p *HTTPPublisher) deliver(ctx context.Context, target string, body []byte) error <span class="cov8" title="1">{
+        req, err := http.NewRequestWithContext(ctx, http.MethodPost, target, bytes.NewReader(body))
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">req.Header.Set("Content-Type", "application/json")
+        if p.secret != "" </span><span class="cov8" title="1">{
+                req.Header.Set("X-LCP-Signature", sign(body, p.secret))
+        }</span>
+        <span class="cov8" title="1">resp, err := p.client.Do(req)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">if err := resp.Body.Close(); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">if resp.StatusCode &lt; 200 || resp.StatusCode &gt;= 300 </span><span class="cov8" title="1">{
+                return fmt.Errorf("webhook returned %s", resp.Status)
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func sign(body []byte, secret string) string <span class="cov8" title="1">{
+        mac := hmac.New(sha256.New, []byte(secret))
+        _, _ = mac.Write(body)
+        return "sha256=" + hex.EncodeToString(mac.Sum(nil))
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

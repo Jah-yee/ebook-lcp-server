@@ -66,17 +66,22 @@ func (s *Service) GenerateLicense(ctx context.Context, license *lcp.License) err
 		"rights": map[string]any{},
 	}
 
+	rights, ok := partial["rights"].(map[string]any)
+	if !ok {
+		return fmt.Errorf("invalid rights payload")
+	}
+
 	if license.RightPrint != nil {
-		partial["rights"].(map[string]any)["print"] = license.RightPrint
+		rights["print"] = license.RightPrint
 	}
 	if license.RightCopy != nil {
-		partial["rights"].(map[string]any)["copy"] = license.RightCopy
+		rights["copy"] = license.RightCopy
 	}
 	if license.StartDate != nil {
-		partial["rights"].(map[string]any)["start"] = license.StartDate.UTC().Truncate(time.Second)
+		rights["start"] = license.StartDate.UTC().Truncate(time.Second)
 	}
 	if license.EndDate != nil {
-		partial["rights"].(map[string]any)["end"] = license.EndDate.UTC().Truncate(time.Second)
+		rights["end"] = license.EndDate.UTC().Truncate(time.Second)
 	}
 
 	body, err := json.Marshal(partial)

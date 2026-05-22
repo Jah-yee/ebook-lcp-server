@@ -1,0 +1,139 @@
+# Coverage Report
+
+[![Coverage](badge.svg)](index.html)
+
+- Total coverage: `77.7%`
+- Generated at: `2026-05-22T08:38:14Z`
+- Raw profile: [coverage.out](coverage.out)
+- Filtered profile: [coverage.filtered.out](coverage.filtered.out)
+- HTML report: [index.html](index.html)
+- Exclusions: generated GraphQL code, main entrypoints, low-level storage/database adapters, the external encrypter wrapper, the LCP-core HTTP client, and the license orchestration use case
+
+## Package Summary
+
+```text
+github.com/amirhdev/ebook-lcp-server/internal/adapter/jwt/middleware.go:12:			New				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/repository/audit/repository.go:27:	NewRepository			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/repository/audit/repository.go:31:	NewPersistentRepository		75.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/repository/audit/repository.go:39:	Save				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/repository/audit/repository.go:46:	FindRecent			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/repository/audit/repository.go:60:	FindRecentByTenant		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/repository/audit/repository.go:76:	load				75.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/repository/audit/repository.go:90:	persistLocked			75.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/repository/audit/repository.go:104:	sanitizeAuditLimit		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/audit.go:15:				NewAuditHandler			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/audit.go:19:				ServeHTTP			81.8%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/auth.go:35:				NewAuthHandler			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/auth.go:47:				Login				50.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/auth.go:101:				Ping				0.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/docs.go:8:				SwaggerYAML			0.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/docs.go:12:				SwaggerJSON			0.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/docs.go:16:				OpenAPIYAML			0.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/docs.go:20:				staticFileHandler		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/license_download.go:20:		NewLicenseDownloadHandler	100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/license_download.go:30:		ServeHTTP			72.7%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/license_download.go:64:		extractLicenseIDForLCPL		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/license_status.go:30:		LicenseStatusDocument		80.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/license_user.go:20:			LicenseUserData			66.7%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/license_user.go:57:			lcpPassphraseHash		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/licenses.go:36:			NewAdminLicensesHandler		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/licenses.go:40:			ServeHTTP			92.3%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/licenses.go:60:			list				63.6%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/licenses.go:77:			update				50.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/licenses.go:108:			revoke				30.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/licenses.go:124:			toAdminLicenseResponse		75.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/publications.go:53:			NewPublicationHandler		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/publications.go:57:			ServeHTTP			66.7%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/publications.go:97:			requirePublisherOrAdmin		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/publications.go:106:			list				69.2%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/publications.go:126:			get				81.8%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/publications.go:143:			create				66.7%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/publications.go:215:			patch				58.5%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/publications.go:277:			setStatus			53.8%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/publications.go:296:			defaultPublicationStatus	100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/publications.go:303:			validatePublicationRights	80.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/publications.go:313:			claimsHasRole			88.9%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/tenants.go:36:			NewTenantStore			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/tenants.go:45:			load				58.3%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/tenants.go:66:			save				72.7%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/tenants.go:84:			List				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/tenants.go:95:			Get				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/tenants.go:106:			Upsert				90.9%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/tenants.go:121:			Delete				83.3%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/tenants.go:135:			NewAdminTenantsHandler		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/tenants.go:139:			ServeHTTP			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/tenants.go:148:			collection			57.1%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/tenants.go:172:			item				63.6%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/users.go:33:				NewAdminUserStore		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/users.go:39:				load				77.8%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/users.go:54:				save				62.5%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/users.go:68:				List				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/users.go:76:				SetVerified			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/users.go:89:				defaultAdminUsers		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/users.go:117:			NewAdminUsersHandler		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/users.go:121:			ServeHTTP			58.3%
+github.com/amirhdev/ebook-lcp-server/internal/adapter/rest/users.go:144:			toggle				66.7%
+github.com/amirhdev/ebook-lcp-server/internal/audit/service.go:22:				NewService			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/audit/service.go:26:				Record				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:43:					FromContext			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:48:					WithClaims			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:62:					New				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:71:					WithAPIKeys			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:76:					WithTenantRateLimits		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:81:					RequireRole			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:111:					rateLimitKey			66.7%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:118:					allow				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:134:					Optional			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:144:					parseRequest			87.5%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:158:					ParseBearerToken		70.0%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:190:					IssueBearerToken		70.0%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:206:					roleAllowed			83.3%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:218:					hasRole				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:222:					requiresTwoFactor		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:226:					sign				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/auth/auth.go:232:					writeAuthError			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/config/config.go:68:				LoadConfig			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/config/config.go:107:				envInt				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/config/config.go:115:				splitCSV			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/config/config.go:129:				defaultString			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/observability/metrics.go:33:			IncWebhookOK			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/observability/metrics.go:34:			IncWebhookFailed		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/observability/metrics.go:35:			IncS3StoreOK			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/observability/metrics.go:36:			IncS3StoreFailed		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/observability/metrics.go:37:			IncS3OpenOK			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/observability/metrics.go:38:			IncS3OpenFailed			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/observability/metrics.go:39:			IncS3SignedURLOK		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/observability/metrics.go:40:			IncS3SignedURLFail		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/observability/metrics.go:41:			IncLicensesOK			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/observability/metrics.go:42:			IncLicensesFailed		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/observability/metrics.go:43:			IncAuthFailed			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/observability/metrics.go:45:			Current				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/pkg/id/generator.go:9:				New				75.0%
+github.com/amirhdev/ebook-lcp-server/internal/pkg/loggers/logger.go:7:				New				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/ratelimit/limiter.go:16:				New				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/ratelimit/limiter.go:25:				Allow				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/requestmeta/requestmeta.go:16:			IDFromContext			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/requestmeta/requestmeta.go:21:			Middleware			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/requestmeta/requestmeta.go:53:			WriteHeader			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/requestmeta/requestmeta.go:58:			newID				75.0%
+github.com/amirhdev/ebook-lcp-server/internal/tenant/tenant.go:9:				IDFromContext			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/usecase/lcp/publication/usecase.go:39:		NewPublicationUsecase		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/usecase/lcp/publication/usecase.go:49:		UploadAndEncrypt		69.7%
+github.com/amirhdev/ebook-lcp-server/internal/usecase/lcp/publication/usecase.go:118:		detectPublicationExt		71.4%
+github.com/amirhdev/ebook-lcp-server/internal/usecase/lcp/publication/usecase.go:131:		detectZipPublicationExt		72.2%
+github.com/amirhdev/ebook-lcp-server/internal/usecase/lcp/publication/usecase.go:160:		httpDetectContentType		66.7%
+github.com/amirhdev/ebook-lcp-server/internal/usecase/lcp/publication/usecase.go:167:		GetAll				88.9%
+github.com/amirhdev/ebook-lcp-server/internal/usecase/lcp/publication/usecase.go:182:		GetByID				83.3%
+github.com/amirhdev/ebook-lcp-server/internal/webhook/webhook.go:46:				Publish				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/webhook/webhook.go:69:				Record				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/webhook/webhook.go:76:				List				100.0%
+github.com/amirhdev/ebook-lcp-server/internal/webhook/webhook.go:89:				NewPersistentFailureRecorder	100.0%
+github.com/amirhdev/ebook-lcp-server/internal/webhook/webhook.go:93:				Record				66.7%
+github.com/amirhdev/ebook-lcp-server/internal/webhook/webhook.go:115:				NewHTTPPublisher		100.0%
+github.com/amirhdev/ebook-lcp-server/internal/webhook/webhook.go:119:				NewHTTPPublisherWithOptions	60.0%
+github.com/amirhdev/ebook-lcp-server/internal/webhook/webhook.go:136:				WithURLResolver			100.0%
+github.com/amirhdev/ebook-lcp-server/internal/webhook/webhook.go:141:				Publish				87.0%
+github.com/amirhdev/ebook-lcp-server/internal/webhook/webhook.go:185:				deliver				78.6%
+github.com/amirhdev/ebook-lcp-server/internal/webhook/webhook.go:207:				sign				100.0%
+total:												(statements)			77.7%
+```

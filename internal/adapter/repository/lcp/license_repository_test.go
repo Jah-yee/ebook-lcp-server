@@ -104,3 +104,30 @@ func TestPersistentLicenseRepositoryLoadsSavedData(t *testing.T) {
 		t.Fatalf("unexpected license: %#v", found)
 	}
 }
+
+func TestLicenseRepositoryFindByPublication(t *testing.T) {
+	repo := NewLicenseRepository()
+	if err := repo.Save(context.Background(), &domain.License{ID: "lic1", PublicationID: "pub1"}); err != nil {
+		t.Fatalf("save failed: %v", err)
+	}
+	if err := repo.Save(context.Background(), &domain.License{ID: "lic2", PublicationID: "pub2"}); err != nil {
+		t.Fatalf("save failed: %v", err)
+	}
+
+	publicationID := "pub1"
+	items, err := repo.FindByPublication(context.Background(), &publicationID)
+	if err != nil {
+		t.Fatalf("find by publication failed: %v", err)
+	}
+	if len(items) != 1 || items[0].ID != "lic1" {
+		t.Fatalf("unexpected filtered licenses: %+v", items)
+	}
+
+	all, err := repo.FindByPublication(context.Background(), nil)
+	if err != nil {
+		t.Fatalf("find all by publication failed: %v", err)
+	}
+	if len(all) != 2 {
+		t.Fatalf("expected two licenses, got %d", len(all))
+	}
+}

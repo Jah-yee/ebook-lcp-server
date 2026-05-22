@@ -17,7 +17,7 @@ func OpenAPIYAML() http.HandlerFunc {
 	return staticFileHandler("docs/openapi-rest.yaml", "text/yaml; charset=utf-8")
 }
 
-func staticFileHandler(path string, contentType string) http.HandlerFunc {
+func staticFileHandler(path, contentType string) http.HandlerFunc {
 	normalized := filepath.Clean(path)
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {

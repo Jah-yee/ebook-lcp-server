@@ -1,6 +1,8 @@
 package publication
 
 import (
+	"archive/zip"
+	"bytes"
 	"context"
 	"io"
 	"os"
@@ -47,7 +49,7 @@ type fakeStorage struct {
 	uri string
 }
 
-func (s fakeStorage) StoreEncrypted(_ context.Context, _ string, _ string) (string, error) {
+func (s fakeStorage) StoreEncrypted(_ context.Context, _, _ string) (string, error) {
 	return s.uri, nil
 }
 
@@ -186,5 +188,34 @@ func TestUploadAndEncryptPublishesWebhook(t *testing.T) {
 	}
 	if hooks.event.Type != webhook.EventPublicationUploaded {
 		t.Fatalf("unexpected event type: %s", hooks.event.Type)
+	}
+}
+
+func TestDetectPublicationExt(t *testing.T) {
+	if got := detectPublicationExt([]byte("%PDF- fake pdf")); got != ".pdf" {
+		t.Fatalf("expected pdf extension, got %q", got)
+	}
+
+	var buf bytes.Buffer
+	zw := zip.NewWriter(&buf)
+	file, err := zw.Create("mimetype")
+	if err != nil {
+		t.Fatalf("create zip entry failed: %v", err)
+	}
+	if _, err := file.Write([]byte("application/epub+zip")); err != nil {
+		t.Fatalf("write zip entry failed: %v", err)
+	}
+	if err := zw.Close(); err != nil {
+		t.Fatalf("close zip writer failed: %v", err)
+	}
+
+	if got := detectPublicationExt(buf.Bytes()); got != ".epub" {
+		t.Fatalf("expected epub extension, got %q", got)
+	}
+	if got := detectZipPublicationExt(buf.Bytes()); got != ".epub" {
+		t.Fatalf("expected zip epub extension, got %q", got)
+	}
+	if got := httpDetectContentType([]byte("plain text")); got == "" {
+		t.Fatal("expected detected content type")
 	}
 }

@@ -157,6 +157,60 @@ func TestRequireRoleUsesTenantRateLimit(t *testing.T) {
 	}
 }
 
+func TestOptionalAndIssueBearerToken(t *testing.T) {
+	token, err := IssueBearerToken("secret", Claims{
+		Subject: "reader-1",
+		Role:    "user",
+		Exp:     time.Now().Add(time.Hour).Unix(),
+	})
+	if err != nil {
+		t.Fatalf("IssueBearerToken failed: %v", err)
+	}
+
+	mw := New("secret", "", nil)
+	handler := mw.Optional(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		claims, ok := FromContext(r.Context())
+		if !ok || claims.Subject != "reader-1" {
+			t.Fatalf("expected optional auth claims, got %+v ok=%v", claims, ok)
+		}
+		w.WriteHeader(http.StatusNoContent)
+	}))
+
+	req := httptest.NewRequest(http.MethodGet, "/optional", nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, req)
+	if rec.Code != http.StatusNoContent {
+		t.Fatalf("expected 204, got %d", rec.Code)
+	}
+}
+
+func TestRequireRoleRejectsMissingTokenAndWrongRole(t *testing.T) {
+	mw := New("secret", "", nil)
+	handler := mw.RequireRole("admin")(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	}))
+
+	missing := httptest.NewRecorder()
+	handler.ServeHTTP(missing, httptest.NewRequest(http.MethodGet, "/admin", nil))
+	if missing.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 for missing token, got %d", missing.Code)
+	}
+
+	token := buildTestToken(t, Claims{
+		Subject: "reader-1",
+		Role:    "user",
+		Exp:     time.Now().Add(time.Hour).Unix(),
+	}, "secret")
+	req := httptest.NewRequest(http.MethodGet, "/admin", nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+	forbidden := httptest.NewRecorder()
+	handler.ServeHTTP(forbidden, req)
+	if forbidden.Code != http.StatusForbidden {
+		t.Fatalf("expected 403 for wrong role, got %d", forbidden.Code)
+	}
+}
+
 func buildTestToken(t *testing.T, claims Claims, secret string) string {
 	t.Helper()
 	header, err := json.Marshal(map[string]string{"alg": "HS256", "typ": "JWT"})

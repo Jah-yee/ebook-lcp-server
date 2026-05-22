@@ -2,6 +2,9 @@ package storage
 
 import (
 	"context"
+	"io"
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 )
@@ -29,5 +32,35 @@ func TestFilesystemStorageDoesNotSignURLs(t *testing.T) {
 	}
 	if ok || url != "" {
 		t.Fatalf("expected no signed URL, got ok=%v url=%q", ok, url)
+	}
+}
+
+func TestFilesystemStorageStoreAndOpen(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "book.epub")
+	if err := os.WriteFile(path, []byte("hello"), 0o644); err != nil {
+		t.Fatalf("WriteFile failed: %v", err)
+	}
+	store := NewFilesystemPublicationStorage()
+	uri, err := store.StoreEncrypted(context.Background(), path, "pub-1")
+	if err != nil {
+		t.Fatalf("StoreEncrypted failed: %v", err)
+	}
+	if uri != path {
+		t.Fatalf("expected local path URI, got %q", uri)
+	}
+	reader, err := store.OpenEncrypted(context.Background(), uri)
+	if err != nil {
+		t.Fatalf("OpenEncrypted failed: %v", err)
+	}
+	defer func() { _ = reader.Close() }()
+	body, err := io.ReadAll(reader)
+	if err != nil {
+		t.Fatalf("ReadAll failed: %v", err)
+	}
+	if string(body) != "hello" {
+		t.Fatalf("unexpected file body %q", string(body))
+	}
+	if err := store.Ready(context.Background()); err != nil {
+		t.Fatalf("Ready failed: %v", err)
 	}
 }

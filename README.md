@@ -1,5 +1,6 @@
-[![CI](https://github.com/amirHdev/ebook-lcp-server/actions/workflows/go.yml/badge.svg)](https://github.com/amirHdev/ebook-lcp-server/actions/workflows/ci.yml)
+[![CI](https://github.com/amirHdev/ebook-lcp-server/actions/workflows/go.yml/badge.svg)](https://github.com/amirHdev/ebook-lcp-server/actions/workflows/go.yml)
 [![CodeQL](https://github.com/amirHdev/ebook-lcp-server/actions/workflows/codeql.yml/badge.svg)](https://github.com/amirHdev/ebook-lcp-server/actions/workflows/codeql.yml)
+[![Coverage](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FamirHdev%2Febook-lcp-server%2Fmain%2Freports%2Fcoverage%2Fcoverage-summary.json&query=%24.total&suffix=%25&label=coverage)](https://github.com/amirHdev/ebook-lcp-server/blob/main/reports/coverage/README.md)
 [![Release](https://img.shields.io/github/v/release/amirHdev/ebook-lcp-server)](https://github.com/amirHdev/ebook-lcp-server/releases)
 [![License](https://img.shields.io/github/license/amirHdev/ebook-lcp-server)](https://github.com/amirHdev/ebook-lcp-server/blob/main/LICENSE)
 [![Docker image](https://img.shields.io/badge/docker-ghcr.io%2Famirhdev%2Febook--lcp--server-blue?logo=docker)](https://github.com/amirHdev/ebook-lcp-server/pkgs/container/ebook-lcp-server)
@@ -28,6 +29,11 @@ docker compose up --build
 ```bash
 sh scripts/demo-local.sh
 ```
+
+Coverage report:
+
+- Repo summary: `reports/coverage/README.md`
+- Regenerate locally: `make coverage`
 
 Zero-setup quickstart:
 

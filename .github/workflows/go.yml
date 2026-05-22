@@ -21,7 +21,14 @@ jobs:
       - run: test -z "$(gofmt -l .)"
       - run: go vet ./...
       - run: go test -v ./...
+      - run: make coverage
       - run: go build -v ./...
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-coverage-report
+          path: reports/coverage
 
       - uses: aquasecurity/trivy-action@v0.36.0
         with:

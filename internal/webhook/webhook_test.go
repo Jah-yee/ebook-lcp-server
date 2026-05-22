@@ -72,8 +72,11 @@ func TestHTTPPublisherUsesContextURLs(t *testing.T) {
 	}))
 	defer server.Close()
 
-	publisher := NewHTTPPublisherWithOptions(nil, "", 1, 0, nil).(*HTTPPublisher).
-		WithURLResolver(func(context.Context) []string { return []string{server.URL} })
+	basePublisher, ok := NewHTTPPublisherWithOptions(nil, "", 1, 0, nil).(*HTTPPublisher)
+	if !ok {
+		t.Fatal("expected HTTPPublisher")
+	}
+	publisher := basePublisher.WithURLResolver(func(context.Context) []string { return []string{server.URL} })
 	if err := publisher.Publish(context.Background(), Event{Type: EventPublicationUploaded}); err != nil {
 		t.Fatalf("Publish failed: %v", err)
 	}

@@ -1,14 +1,29 @@
 run:
   timeout: 5m
+  tests: true
 
 linters:
   enable:
+    - errcheck
+    - gofumpt
+    - govet
     - gocyclo
+    - ineffassign
+    - misspell
     - revive
+    - staticcheck
+    - unconvert
+    - unused
 
 linters-settings:
+  errcheck:
+    check-type-assertions: true
+
   gocyclo:
     min-complexity: 30
+
+  gofumpt:
+    extra-rules: true
 
   revive:
     ignore-generated-header: true
@@ -28,3 +43,9 @@ linters-settings:
 issues:
   exclude-files:
     - "internal/adapter/graphql/generated.go"
+  exclude-rules:
+    - path: "internal/adapter/graphql/generated.go"
+      linters:
+        - gofumpt
+        - staticcheck
+        - unused

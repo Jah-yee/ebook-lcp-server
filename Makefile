@@ -1,4 +1,6 @@
-.PHONY: fmt lint test vuln clean run
+.PHONY: fmt lint test coverage vuln clean run
+
+COVERAGE_DIR := reports/coverage
 
 fmt:
 	gofumpt -w .
@@ -9,11 +11,14 @@ lint:
 test:
 	go test ./... -cover -race -v
 
+coverage:
+	./scripts/coverage-report.sh $(COVERAGE_DIR)
+
 vuln:
 	govulncheck ./...
 
 run:
-	go run ./cmd/api
+	go run ./cmd/server
 
 clean:
 	go clean
