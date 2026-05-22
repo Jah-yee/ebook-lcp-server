@@ -1,8 +1,23 @@
 ## Summary
 
-## Verification
+Describe your changes clearly.
 
-- [ ] `go test ./...`
-- [ ] `cd frontend && npm run build`
-- [ ] Docs updated when behavior changed
-- [ ] No secrets or private keys added outside approved fixtures
+## Type of change
+
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Refactor
+- [ ] Documentation
+- [ ] Tests
+
+## Checklist
+
+- [ ] Tests pass
+- [ ] Lint passes
+- [ ] Documentation updated
+- [ ] No sensitive data added
+- [ ] Added/updated tests
+
+## Related Issues
+
+Closes #

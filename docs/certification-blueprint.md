@@ -44,7 +44,7 @@ The smoke script writes `certification-report.json` with machine-readable readin
 
 ## Production certificate swap
 
-See [docs/certificate-swap-guide.md](/Users/mehrbod/projects/golang/lcp/docs/certificate-swap-guide.md) for the operational handoff from the bundled test setup to a real production certificate and private key.
+See [docs/certificate-swap-guide.md](./certificate-swap-guide.md) for the operational handoff from the bundled test setup to a real production certificate and private key.
 
 ## External step that still remains
 
